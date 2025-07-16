@@ -19,6 +19,12 @@ import GlobalStyles from './styles/GlobalStyles';
 import SchoolGradeSelectionPage from './pages/SchoolGradeSelectionPage';
 import OrderHistoryPage from './pages/user/OrderHistoryPage'; // Página de histórico de pedidos (ainda não detalhada)
 import OrderDetailPage from './pages/user/OrderDetailPage'; // NOVO: Importa a página de detalhes do pedido
+import AdminLayout from './layouts/AdminLayout'; // Importe o novo layout
+import AdminDashboard from './pages/admin/AdminDashboard'; // Importe a dashboard do admin
+import AdminSuppliersPage from './pages/admin/AdminSuppliersPage'; // Importe a página de distribuidores
+import AdminShippingCompaniesPage from './pages/admin/AdminShippingCompaniesPage'; // Importe a página de empresas de entrega
+import AdminSchoolsPage from './pages/admin/AdminSchoolsPage'; // Importe a página de escolas
+import AdminContactsPage from './pages/admin/AdminContactsPage'; // Importe a página de contatos
 
 function App() {
   return (
@@ -40,6 +46,19 @@ function App() {
 	  <Route path="/perfil" element={<ProfilePage />} />
 	  <Route path="/meus-pedidos" element={<OrderHistoryPage />} /> {/* Rota para a lista completa de pedidos */}
           <Route path="/meus-pedidos/:id" element={<OrderDetailPage />} /> {/* NOVO: Rota para o detalhe do pedido */}
+
+         {/* Novas Rotas para o Painel Administrativo */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} /> {/* Rota padrão para /admin */}
+            {/* Futuras rotas do admin (ex: produtos, usuários, etc.) serão adicionadas aqui */}
+            {/* <Route path="produtos" element={<AdminProductsPage />} /> */}
+            <Route path="distribuidores" element={<AdminSuppliersPage />} />
+	    <Route path="empresas-entrega" element={<AdminShippingCompaniesPage />} />
+	    <Route path="escolas" element={<AdminSchoolsPage />} />
+   	    <Route path="contatos" element={<AdminContactsPage />} />
+            {/* <Route path="contatos" element={<AdminContactsPage />} /> */}
+          </Route>
+
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
