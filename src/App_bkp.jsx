@@ -27,7 +27,6 @@ import AdminSchoolsPage from './pages/admin/AdminSchoolsPage'; // Importe a pág
 import AdminContactsPage from './pages/admin/AdminContactsPage'; // Importe a página de contatos
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminInventoryPage from './pages/admin/AdminInventoryPage'; // Importe a página de inventário
-import AdminOrdersPage from './components/admin/AdminOrdersPage'; // <--- CAMINHO CORRIGIDO
 
 function App() {
   return (
@@ -36,31 +35,31 @@ function App() {
         <GlobalStyles />
         <Header />
         <Routes>
-          <Route path="/" element={<SchoolGradeSelectionPage />} />
+	  <Route path="/" element={<SchoolGradeSelectionPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/pacotes" element={<ProductsPage />} />
           <Route path="/pacotes/:id" element={<ProductDetailPage />} />
           <Route path="/carrinho" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/sobre" element={<AboutPage />} />
-          <Route path="/contato" element={<ContactPage />} />
-          <Route path="/politica-privacidade" element={<PrivacyPolicyPage />} />
-          <Route path="/termos-de-uso" element={<TermsOfUsePage />} />
-          <Route path="/perfil" element={<ProfilePage />} />
-          <Route path="/meus-pedidos" element={<OrderHistoryPage />} />
-          <Route path="/meus-pedidos/:id" element={<OrderDetailPage />} />
+	  <Route path="/sobre" element={<AboutPage />} />
+	  <Route path="/contato" element={<ContactPage />} />
+	  <Route path="/politica-privacidade" element={<PrivacyPolicyPage />} />
+	  <Route path="/termos-de-uso" element={<TermsOfUsePage />} />
+	  <Route path="/perfil" element={<ProfilePage />} />
+	  <Route path="/meus-pedidos" element={<OrderHistoryPage />} /> {/* Rota para a lista completa de pedidos */}
+          <Route path="/meus-pedidos/:id" element={<OrderDetailPage />} /> {/* NOVO: Rota para o detalhe do pedido */}
 
-          {/* Novas Rotas para o Painel Administrativo */}
+         {/* Novas Rotas para o Painel Administrativo */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-	    <Route path="dashboard" element={<AdminDashboard />} />
+            <Route index element={<AdminDashboard />} /> {/* Rota padrão para /admin */}
+            {/* Futuras rotas do admin (ex: produtos, usuários, etc.) serão adicionadas aqui */}
             <Route path="distribuidores" element={<AdminSuppliersPage />} />
-            <Route path="empresas-entrega" element={<AdminShippingCompaniesPage />} />
-            <Route path="escolas" element={<AdminSchoolsPage />} />
-            <Route path="contatos" element={<AdminContactsPage />} />
-            <Route path="produtos" element={<AdminProductsPage />} />
-            <Route path="inventario" element={<AdminInventoryPage />} />
-            <Route path="pedidos" element={<AdminOrdersPage />} /> {/* <--- NOVO: Adicione a rota para Pedidos Admin */}
+	    <Route path="empresas-entrega" element={<AdminShippingCompaniesPage />} />
+	    <Route path="escolas" element={<AdminSchoolsPage />} />
+   	    <Route path="contatos" element={<AdminContactsPage />} />
+	    <Route path="produtos" element={<AdminProductsPage />} />
+	    <Route path="inventario" element={<AdminInventoryPage />} />
+            {/* <Route path="contatos" element={<AdminContactsPage />} /> */}
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

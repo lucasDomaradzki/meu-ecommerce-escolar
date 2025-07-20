@@ -1,13 +1,14 @@
 // src/pages/admin/AdminContactsPage.jsx
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-import { FaSort, FaSortUp, FaSortDown, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaSort, FaSortUp, FaSortDown, FaEdit, FaTrash } from 'react-icons/fa'; // Adicione FaEdit e FaTrash para os botões de ação
 import Button from '../../components/common/Button';
-import Modal from '../../components/common/Modal';
-import { allEntities } from '../../data/adminEntities';
+import Modal from '../../components/common/Modal'; // Se você usa modal para Adicionar/Editar
+import { allEntities } from '../../data/adminEntities'; // Importa os dados mockados
 
-// Importe o ContactForm
-import ContactForm from '../../components/admin/ContactForm';
+// Você precisará criar esses componentes para o modal
+// import ContactForm from '../../components/admin/ContactForm'; // Para adicionar/editar contatos
+// import ContactDetails from '../../components/admin/ContactDetails'; // Para visualizar detalhes
 
 const TableContainer = styled.div`
   background-color: var(--color-white);
@@ -63,6 +64,7 @@ const ActionsCell = styled.td`
 `;
 
 const AdminContactsPage = () => {
+  // Inicializa o estado com os contatos do mock
   const [contacts, setContacts] = useState(allEntities.contacts || []);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -74,7 +76,7 @@ const AdminContactsPage = () => {
     let sortableItems = [...contacts];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key] || '';
+        const aValue = a[sortConfig.key] || ''; // Tratar valores null/undefined
         const bValue = b[sortConfig.key] || '';
 
         if (aValue < bValue) {
@@ -103,55 +105,51 @@ const AdminContactsPage = () => {
     return <FaSortDown />;
   };
 
-  const handleSaveContact = (newOrUpdatedContact) => {
-    if (newOrUpdatedContact.id && contacts.some(c => c.id === newOrUpdatedContact.id)) {
-      // Editar contato existente
-      setContacts(prevContacts =>
-        prevContacts.map(c => (c.id === newOrUpdatedContact.id ? newOrUpdatedContact : c))
-      );
-    } else {
-      // Adicionar novo contato
-      // Para o mock, garantimos que o ID está sendo gerado no ContactForm
-      setContacts(prevContacts => [...prevContacts, newOrUpdatedContact]);
-    }
-    setShowModal(false); // Fecha o modal após salvar
-  };
-
-  const handleAddContact = () => {
+  // Funções de CRUD (Adicionar, Editar, Excluir) - Mockadas por enquanto
+  const handleAddItem = () => {
     setModalTitle("Adicionar Novo Contato");
-    setModalContent(
-      <ContactForm
-        onSave={handleSaveContact}
-        onClose={() => setShowModal(false)}
-      />
-    );
+    // Você precisará criar o ContactForm para isso
+    // setModalContent(<ContactForm onSubmitSuccess={(newContact) => {
+    //   setContacts([...contacts, { ...newContact, id: `NEW-${Date.now()}` }]);
+    //   setShowModal(false);
+    // }} />);
+    // Por enquanto, apenas abre o modal vazio
+    setModalContent(<div>Formulário para adicionar contato (ainda não implementado)</div>);
     setShowModal(true);
   };
 
-  const handleEditContact = (contactToEdit) => {
+  const handleEditItem = (item) => {
     setModalTitle("Editar Contato");
-    setModalContent(
-      <ContactForm
-        contact={contactToEdit}
-        onSave={handleSaveContact}
-        onClose={() => setShowModal(false)}
-      />
-    );
+    // Você precisará criar o ContactForm para isso e passar o item
+    // setModalContent(<ContactForm contact={item} onSubmitSuccess={(updatedContact) => {
+    //   setContacts(contacts.map(c => (c.id === updatedContact.id ? updatedContact : c)));
+    //   setShowModal(false);
+    // }} />);
+    // Por enquanto, apenas abre o modal com dados mockados
+    setModalContent(<div>Formulário para editar contato (ainda não implementado) para: {item.name}</div>);
     setShowModal(true);
   };
 
   const handleDeleteItem = (id) => {
     if (window.confirm(`Tem certeza que deseja excluir o contato com ID: ${id}?`)) {
+      // Lógica para deletar contato
       setContacts(contacts.filter(contact => contact.id !== id));
       alert("Contato excluído com sucesso!");
     }
   };
 
+  // Se você tiver uma função para visualizar detalhes, seria algo como:
+  // const handleViewDetails = (item) => {
+  //   setModalTitle("Detalhes do Contato");
+  //   setModalContent(<ContactDetails contact={item} />);
+  //   setShowModal(true);
+  // };
+
   return (
     <TableContainer>
       <HeaderContainer>
         <Title>Gestão de Contatos</Title>
-        <Button onClick={handleAddContact}>Adicionar Contato</Button>
+        <Button onClick={handleAddItem}>Adicionar Contato</Button>
       </HeaderContainer>
 
       <StyledTable>
@@ -167,6 +165,7 @@ const AdminContactsPage = () => {
           </tr>
         </thead>
         <tbody>
+          {/* IMPORTANTE: Sem espaços ou quebras de linha extras entre <tbody> e a primeira <tr> do map */}
           {sortedContacts.length > 0 ? (
             sortedContacts.map((contact) => (
               <tr key={contact.id}>
@@ -175,9 +174,12 @@ const AdminContactsPage = () => {
                 <td>{contact.email}</td>
                 <td>{contact.phone}</td>
                 <td>{contact.role}</td>
-                <td>{contact.entityName || 'N/A'}</td>
+                <td>{contact.entityName || 'N/A'}</td> {/* 'N/A' para caso entityName seja nulo */}
                 <ActionsCell>
-                  <Button onClick={() => handleEditContact(contact)}><FaEdit /></Button>
+                  {/* <Button variant="secondary" onClick={() => handleViewDetails(contact)}>
+                    <FaEye />
+                  </Button> */}
+                  <Button onClick={() => handleEditItem(contact)}><FaEdit /></Button>
                   <Button variant="danger" onClick={() => handleDeleteItem(contact.id)}><FaTrash /></Button>
                 </ActionsCell>
               </tr>

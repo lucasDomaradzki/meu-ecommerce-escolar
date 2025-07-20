@@ -1,5 +1,5 @@
 // src/components/admin/ContactForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react'; // <--- Adicione useMemo aqui
 import styled from 'styled-components';
 import Button from '../common/Button';
 import { allEntities } from '../../data/adminEntities'; // Importa todas as entidades mockadas
@@ -13,7 +13,7 @@ const FormContainer = styled.form`
 
   label {
     font-weight: bold;
-    color: var(--color-text);
+    color: var(--color-text-dark); /* Ajustei para sua variável de cor */
   }
 
   input[type="text"],
@@ -26,7 +26,7 @@ const FormContainer = styled.form`
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
-    background-color: var(--color-white); /* Garante fundo branco para selects */
+    background-color: var(--color-white);
   }
 
   .button-group {
@@ -37,47 +37,67 @@ const FormContainer = styled.form`
   }
 `;
 
-const ContactForm = ({ contact, onSave, onClose }) => { // Removido 'entities' das props, agora importamos diretamente
+// Função auxiliar para gerar um ID único simples (para mocks)
+const generateUniqueId = () => `CONTACT-${Date.now()}`;
+
+const ContactForm = ({ contact, onSave, onClose }) => {
   const [formData, setFormData] = useState({
+    id: contact ? contact.id : generateUniqueId(), // Garante ID para novos contatos
     name: '',
     email: '',
     phone: '',
     role: '',
     entityType: '',
     entityId: '',
+    entityName: '', // Novo campo para armazenar o nome completo da entidade vinculada
   });
 
-  const [currentEntities, setCurrentEntities] = useState([]);
-
+  // Use useEffect para inicializar o formulário quando o 'contact' prop muda
   useEffect(() => {
     if (contact) {
       setFormData({
+        id: contact.id || generateUniqueId(),
         name: contact.name || '',
         email: contact.email || '',
         phone: contact.phone || '',
         role: contact.role || '',
         entityType: contact.entityType || '',
         entityId: contact.entityId || '',
+        entityName: contact.entityName || '',
       });
     } else {
+      // Resetar para novo contato
       setFormData({
+        id: generateUniqueId(),
         name: '',
         email: '',
         phone: '',
         role: '',
         entityType: '',
         entityId: '',
+        entityName: '',
       });
     }
   }, [contact]);
 
+  // Efeito para atualizar `entityName` e `entityId` quando `entityType` muda ou `contact` é carregado
   useEffect(() => {
-    if (formData.entityType && allEntities[formData.entityType]) { // Usa allEntities importado
-      setCurrentEntities(allEntities[formData.entityType]);
+    if (formData.entityType) {
+      const selectedEntities = allEntities[formData.entityType + 's']; // Ex: 'suppliers', 'schools'
+      if (selectedEntities) {
+        const selectedEntity = selectedEntities.find(e => e.id === formData.entityId);
+        setFormData(prevData => ({
+          ...prevData,
+          entityName: selectedEntity ? `${selectedEntity.name} (${formData.entityType})` : '',
+        }));
+      }
     } else {
-      setCurrentEntities([]);
+      setFormData(prevData => ({
+        ...prevData,
+        entityName: '',
+      }));
     }
-  }, [formData.entityType]); // Removido 'entities' da dependência
+  }, [formData.entityType, formData.entityId]); // Depende também do entityId para o nome
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,19 +109,62 @@ const ContactForm = ({ contact, onSave, onClose }) => { // Removido 'entities' d
     if (name === 'entityType') {
       setFormData(prevData => ({
         ...prevData,
-        entityId: '',
+        entityId: '', // Resetar entityId ao mudar o tipo de entidade
+        entityName: '', // Resetar entityName também
       }));
     }
   };
 
+  const handleEntityIdChange = (e) => {
+    const selectedEntityId = e.target.value;
+    let selectedEntityName = '';
+    
+    if (selectedEntityId && formData.entityType) {
+      const currentEntityList = allEntities[formData.entityType + 's']; // Ex: allEntities.suppliers
+      const foundEntity = currentEntityList?.find(e => e.id === selectedEntityId);
+      if (foundEntity) {
+        selectedEntityName = `${foundEntity.name} (${formData.entityType})`;
+      }
+    }
+
+    setFormData(prevData => ({
+      ...prevData,
+      entityId: selectedEntityId,
+      entityName: selectedEntityName,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.entityType || !formData.entityId) {
-      alert('Por favor, selecione o tipo e a entidade vinculada.');
-      return;
+
+    // Validação básica para garantir que tipo e entidade foram selecionados
+    if (formData.entityType !== 'user' && (!formData.entityType || !formData.entityId)) {
+        alert('Por favor, selecione o tipo e a entidade vinculada.');
+        return;
     }
-    onSave({ ...formData, id: contact ? contact.id : null });
+    
+    // Se for tipo "user", garantir que entityId e entityName sejam "N/A" ou específicos
+    if (formData.entityType === 'user') {
+      // Aqui, em um cenário real, você buscaria o ID do usuário logado ou selecionado.
+      // Para o mock, vamos definir um valor padrão.
+      const userContactData = {
+        ...formData,
+        entityId: 'USER-CURRENT', // Exemplo de ID para usuário (pode ser o ID do usuário logado)
+        entityName: 'Nome do Usuário (Comprador)', // Exemplo de nome para usuário
+      };
+      onSave(userContactData);
+    } else {
+      onSave(formData);
+    }
   };
+
+  // Mapeia todas as entidades para o dropdown secundário
+  const currentEntitiesOptions = useMemo(() => {
+    // Adiciona um 's' ao final do entityType para corresponder às chaves em allEntities
+    // Ex: 'supplier' -> 'suppliers'
+    const key = formData.entityType ? formData.entityType + 's' : null;
+    return key && allEntities[key] ? allEntities[key] : [];
+  }, [formData.entityType]);
 
   return (
     <FormContainer onSubmit={handleSubmit}>
@@ -127,7 +190,7 @@ const ContactForm = ({ contact, onSave, onClose }) => { // Removido 'entities' d
 
       <label htmlFor="phone">Telefone:</label>
       <input
-        type="tel"
+        type="tel" // Alterado para 'tel' para melhor semântica
         id="phone"
         name="phone"
         value={formData.phone}
@@ -155,27 +218,33 @@ const ContactForm = ({ contact, onSave, onClose }) => { // Removido 'entities' d
         <option value="supplier">Distribuidor</option>
         <option value="shippingCompany">Empresa de Entrega</option>
         <option value="school">Escola</option>
-        <option value="user">Usuário</option> {/* NOVO: Opção para Usuário */}
+        <option value="user">Usuário (Comprador)</option> {/* Opção para Usuário */}
       </select>
 
-      {formData.entityType && (
+      {formData.entityType && formData.entityType !== 'user' && ( // Só mostra se um tipo foi selecionado e NÃO for "usuário"
         <>
           <label htmlFor="entityId">Entidade Vinculada:</label>
           <select
             id="entityId"
             name="entityId"
             value={formData.entityId}
-            onChange={handleChange}
+            onChange={handleEntityIdChange} // Nova função de tratamento
             required
           >
             <option value="">Selecione a Entidade</option>
-            {currentEntities.map(entity => (
+            {currentEntitiesOptions.map(entity => (
               <option key={entity.id} value={entity.id}>
                 {entity.name}
               </option>
             ))}
           </select>
         </>
+      )}
+      {/* Se for tipo "user", podemos mostrar um campo informativo ou ocultar */}
+      {formData.entityType === 'user' && (
+        <p style={{marginTop: '10px', color: 'var(--color-text-dark)'}}>
+          Este contato será associado a um usuário (comprador).
+        </p>
       )}
 
       <div className="button-group">

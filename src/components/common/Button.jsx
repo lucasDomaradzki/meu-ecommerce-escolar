@@ -1,88 +1,70 @@
 // src/components/common/Button.jsx
 import styled from 'styled-components';
 
-const Button = styled.button`
-  padding: 0.8rem 1.5rem;
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'outline', 'primary'].includes(prop) // <--- Adicione 'outline' e 'primary' aqui
+})`
+  padding: 10px 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: bold;
-  transition: all 0.3s ease;
-  white-space: nowrap; /* Impede que o texto quebre */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 
-  // Estilos primários
-  ${props => props.$primary && `
-    background-color: var(--color-primary);
-    color: #fff;
+  /* Estilos padrão (se nenhuma prop específica for usada) */
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: 1px solid var(--color-primary);
+
+  &:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+
+  /* Estilos para variant="secondary" */
+  ${props => props.variant === 'secondary' && `
+    background-color: var(--color-gray);
+    color: var(--color-text-dark);
+    border-color: var(--color-gray);
     &:hover {
-      background-color: var(--color-primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    &:active {
-      transform: translateY(0);
-      box-shadow: none;
+      background-color: var(--color-gray-dark);
+      border-color: var(--color-gray-dark);
     }
   `}
 
-  // Estilos de contorno
-  ${props => props.$outline && `
-    background-color: transparent;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
-    &:hover {
-      background-color: var(--color-primary-light);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    &:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-  `}
-
-  // Estilos de perigo (para exclusão, etc.)
-  ${props => props.$danger && `
+  /* Estilos para variant="danger" */
+  ${props => props.variant === 'danger' && `
     background-color: var(--color-danger);
-    color: #fff;
+    color: var(--color-white);
+    border-color: var(--color-danger);
     &:hover {
       background-color: var(--color-danger-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    &:active {
-      transform: translateY(0);
-      box-shadow: none;
+      border-color: var(--color-danger-dark);
     }
   `}
 
-  // Estilos para botões pequenos
-  ${props => props.$small && `
-    padding: 0.5rem 1rem; // Ajusta o padding para um botão menor
-    font-size: 0.85rem; // Diminui o tamanho da fonte
-  `}
-
-  // Estilos padrão se nenhuma prop de tipo for passada
-  ${props => !props.$primary && !props.$outline && !props.$danger && `
-    background-color: var(--color-gray-dark);
-    color: #fff;
+  /* Estilos para prop $primary (se você quiser um botão primário explícito) */
+  ${props => props.$primary && `
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
     &:hover {
-      background-color: var(--color-gray);
+      background-color: var(--color-primary-dark);
+      border-color: var(--color-primary-dark);
     }
   `}
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
+  /* Estilos para prop $outline */
+  ${props => props.$outline && `
+    background-color: transparent;
+    color: var(--color-primary); /* Cor do texto quando outline */
+    border: 1px solid var(--color-primary);
+    &:hover {
+      background-color: var(--color-primary-light); /* Fundo leve no hover */
+      color: var(--color-primary-dark);
+    }
+  `}
 `;
 
 export default Button;

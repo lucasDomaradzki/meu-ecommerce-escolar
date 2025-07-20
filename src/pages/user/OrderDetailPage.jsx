@@ -1,214 +1,207 @@
 // src/pages/user/OrderDetailPage.jsx
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useParams, useNavigate } from 'react-router-dom';
+import { allEntities } from '../../data/adminEntities'; // Assumindo que você busca o pedido daqui
 import Button from '../../components/common/Button';
-import Card from '../../components/common/Card';
-import { orders as mockOrders } from '../../data/orders'; 
 
-const OrderDetailPageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 20px;
-  min-height: calc(100vh - var(--header-height) - var(--footer-height));
-  background-color: var(--color-background-light);
+const DetailPageContainer = styled.div`
+  background-color: var(--color-white);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-small);
+  margin: 20px auto;
+  max-width: 900px;
 `;
 
-const OrderDetailCard = styled(Card)`
-  width: 100%;
-  max-width: 900px;
-  padding: 30px;
-  text-align: left;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+`;
+
+const Title = styled.h2`
+  color: var(--color-text-dark);
+  font-size: 2em;
+  margin: 0;
+`;
+
+const OrderInfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 30px;
   margin-bottom: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  background-color: var(--color-background);
+`;
 
-  h1 {
-    font-size: 2.5rem;
-    color: var(--color-primary);
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 15px;
-  }
+const InfoItem = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-  h2 {
-    font-size: 1.8rem;
-    color: var(--color-primary-dark);
-    margin-top: 30px;
-    margin-bottom: 15px;
-  }
+const Label = styled.span`
+  font-weight: bold;
+  color: var(--color-text);
+  margin-bottom: 5px;
+`;
 
-  p {
-    font-size: 1.1rem;
-    color: var(--color-text);
-    margin-bottom: 8px;
-  }
+const Value = styled.span`
+  color: var(--color-text-dark);
+`;
 
-  strong {
-    color: var(--color-tertiary);
-  }
+const SectionTitle = styled.h3`
+  color: var(--color-primary-dark);
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  border-bottom: 2px solid var(--color-primary-light);
+  padding-bottom: 5px;
+`;
 
-  .status {
-    font-weight: bold;
-    color: ${props => {
-      switch (props.$status) {
-        case 'Entregue': return 'var(--color-success)';
-        case 'Processando': return 'var(--color-primary-dark)';
-        case 'Cancelado': return 'var(--color-danger)';
-        default: return 'var(--color-text)';
-      }
-    }};
-  }
+const ProductsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-background);
+  max-height: 250px; /* Limita a altura para scroll */
+  overflow-y: auto;
+`;
 
-  .item-list {
-    margin-top: 15px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .item-header, .item-row {
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr; /* Nome, Qtd, Preço Unit, Total */
-    gap: 15px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--color-border-light);
-    align-items: center;
-
-    @media (max-width: var(--breakpoint-tablet)) {
-        grid-template-columns: 1fr 1fr; /* Nome e Total para mobile */
-        .item-qty, .item-unit-price {
-            display: none; /* Esconde Qtd e Preço Unit em mobile */
-        }
-    }
-  }
-
-  .item-header {
-    background-color: var(--color-background-light);
-    font-weight: bold;
-    color: var(--color-primary-dark);
-  }
-
-  .item-row:last-child {
+const ProductItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--color-border);
+  &:last-child {
     border-bottom: none;
   }
+`;
 
-  .item-name {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    img {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-      border-radius: 4px;
-    }
-    a {
-        color: var(--color-primary);
-        text-decoration: none;
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-  }
+const ProductName = styled.span`
+  font-weight: bold;
+  color: var(--color-text-dark);
+  flex: 1;
+`;
 
-  .order-summary-details {
-    margin-top: 25px;
-    text-align: right;
+const ProductDetails = styled.div`
+  display: flex;
+  gap: 20px;
+  color: var(--color-text);
+`;
 
-    p {
-        margin-bottom: 5px;
-        font-size: 1.1rem;
-    }
-    p:last-child {
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: var(--color-tertiary);
-        margin-top: 10px;
-    }
-  }
+const OrderSummary = styled.div`
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid var(--color-border);
+  text-align: right;
+`;
 
-  @media (max-width: var(--breakpoint-tablet)) {
-    padding: 20px;
-    h1 {
-      font-size: 2rem;
-    }
-    h2 {
-      font-size: 1.6rem;
-    }
-    p {
-      font-size: 1rem;
-    }
-  }
+const SummaryItem = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
 `;
 
 const OrderDetailPage = () => {
-  const { id } = useParams();
+  const { orderId } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const foundOrder = mockOrders.find(o => o.id === id);
-    if (foundOrder) {
+    const fetchOrder = () => {
+      setLoading(true);
+      // Simula o carregamento de dados buscando no mock allEntities.orders
+      const foundOrder = allEntities.orders.find(o => o.id === orderId);
       setOrder(foundOrder);
-    } else {
-      navigate('/404'); 
-    }
-  }, [id, navigate]);
+      setLoading(false);
+    };
 
-  if (!order) {
-    return <OrderDetailPageContainer>Carregando detalhes do pedido...</OrderDetailPageContainer>;
+    fetchOrder();
+  }, [orderId]); // Roda quando o orderId na URL muda
+
+  if (loading) {
+    return <DetailPageContainer><p>Carregando detalhes do pedido...</p></DetailPageContainer>;
   }
 
-  // CORREÇÃO AQUI: Use 'date' para a data
-  const formattedDate = new Date(order.date).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
+  if (!order) {
+    return <DetailPageContainer><p>Pedido não encontrado.</p></DetailPageContainer>;
+  }
 
   return (
-    <OrderDetailPageContainer>
-      <OrderDetailCard $status={order.status}>
-        <h1>Detalhes do Pedido #{order.id}</h1>
-        <p><strong>Data do Pedido:</strong> {formattedDate}</p>
-        <p><strong>Status:</strong> <span className="status">{order.status}</span></p>
+    <DetailPageContainer>
+      <Header>
+        <Title>Detalhes do Pedido #{order.id}</Title>
+        <Button onClick={() => navigate('/pedidos')}>Voltar aos Pedidos</Button>
+      </Header>
 
-        <h2>Endereço de Entrega</h2>
-        {/* CORREÇÃO AQUI: Use as propriedades de endereço conforme seu orders.js */}
-        <p>{order.shippingAddress.street}</p> {/* Apenas a rua, se não houver outras informações detalhadas */}
-        <p>{order.shippingAddress.city} - {order.shippingAddress.state}</p> {/* Cidade e Estado */}
-        <p>CEP: {order.shippingAddress.zip}</p> {/* CEP */}
+      <OrderInfoGrid>
+        <InfoItem>
+          <Label>Distribuídor:</Label>
+          <Value>{order.distributorName || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Contato do Distribuidor:</Label>
+          <Value>{order.contactPersonName || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Endereço de Entrega:</Label>
+          <Value>{order.deliveryAddress || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Empresa de Entrega:</Label>
+          <Value>{order.shippingCompanyName || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Status:</Label>
+          <Value>{order.status || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Data do Pedido:</Label>
+          <Value>{order.orderDate || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Data de Entrega:</Label>
+          <Value>{order.deliveryDate || 'N/A'}</Value>
+        </InfoItem>
+        <InfoItem>
+          <Label>Código de Rastreamento:</Label>
+          <Value>{order.trackingCode || 'N/A'}</Value>
+        </InfoItem>
+      </OrderInfoGrid>
 
-        <h2>Itens do Pedido</h2>
-        <div className="item-list">
-          <div className="item-header">
-            <span>Produto</span>
-            <span className="item-qty">Qtd</span>
-            <span className="item-unit-price">Preço Unit.</span>
-            <span>Total</span>
-          </div>
-          {order.items.map(item => (
-            <div className="item-row" key={item.productId}>
-              <span className="item-name">
-                {item.imageUrl && <img src={item.imageUrl} alt={item.name} />}
-                {item.link ? <Link to={item.link}>{item.name}</Link> : item.name}
-              </span>
-              <span className="item-qty">{item.quantity}</span>
-              <span className="item-unit-price">R$ {item.price.toFixed(2).replace('.', ',')}</span>
-              <span>R$ {(item.quantity * item.price).toFixed(2).replace('.', ',')}</span>
-            </div>
-          ))}
-        </div>
+      <SectionTitle>Produtos no Pedido</SectionTitle>
+      <ProductsList>
+        {order.items && order.items.length > 0 ? (
+          order.items.map(item => (
+            <ProductItem key={item.productId}> {/* Assumindo que productId é único para cada item no pedido */}
+              <ProductName>{item.productName || 'Produto Desconhecido'}</ProductName>
+              <ProductDetails>
+                <span>Qtd: {item.quantity || 0}</span>
+                <span>Preço Unitário: R$ {(item.price || 0).toFixed(2)}</span> {/* CORREÇÃO AQUI */}
+              </ProductDetails>
+            </ProductItem>
+          ))
+        ) : (
+          <p style={{ padding: '15px' }}>Nenhum item neste pedido.</p>
+        )}
+      </ProductsList>
 
-        <div className="order-summary-details">
-            <p>Subtotal: R$ {order.totalValue.toFixed(2).replace('.', ',')}</p> {/* CORREÇÃO: totalValue */}
-            <p>Frete: R$ 0,00 {/* Simulado, adicionar lógica real se houver */}</p>
-            <p>Total do Pedido: <strong>R$ {order.totalValue.toFixed(2).replace('.', ',')}</strong></p> {/* CORREÇÃO: totalValue */}
-        </div>
-
-      </OrderDetailCard>
-      <Button $outline onClick={() => navigate('/meus-pedidos')}>Voltar para Meus Pedidos</Button>
-    </OrderDetailPageContainer>
+      <OrderSummary>
+        <SummaryItem>
+          <Label>Total do Pedido:</Label>
+          <Value>R$ {(order.total || 0).toFixed(2)}</Value> {/* CORREÇÃO AQUI */}
+        </SummaryItem>
+      </OrderSummary>
+    </DetailPageContainer>
   );
 };
 
