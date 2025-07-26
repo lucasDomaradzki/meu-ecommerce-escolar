@@ -1,10 +1,9 @@
-// src/pages/auth/LoginPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import Card from '../../components/common/Card'; // Para envolver o formulário
+import Card from '../../components/common/Card';
 
 const AuthContainer = styled.div`
   display: flex;
@@ -56,7 +55,6 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica de autenticação virá aqui
     console.log('Login attempt:', { email, password });
     alert(`Login com ${email} (Ainda não implementado!)`);
   };

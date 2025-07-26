@@ -1,6 +1,5 @@
-// src/layouts/MainLayout.jsx
 import React from 'react';
-import { Outlet } from 'react-router-dom'; // Para renderizar o conteúdo da rota aninhada
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Header from './Header';
@@ -26,7 +25,7 @@ const MainLayout = () => {
     <LayoutWrapper>
       <Header />
       <MainContent>
-        <Outlet /> {/* Aqui será renderizado o conteúdo da rota aninhada (as páginas) */}
+        <Outlet />
       </MainContent>
       <Footer />
     </LayoutWrapper>

@@ -1,4 +1,3 @@
-// src/pages/OrderHistoryPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -61,8 +60,7 @@ const ActionButton = styled(Button)`
 `;
 
 const OrderHistoryPage = () => {
-  // Em uma implementação real, você buscaria os pedidos do usuário aqui
-  const hasOrders = false; // Simulação: se o usuário tem pedidos ou não
+  const hasOrders = false;
 
   return (
     <OrdersContainer>

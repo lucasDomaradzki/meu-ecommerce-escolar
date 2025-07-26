@@ -1,4 +1,3 @@
-// src/components/common/Modal.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
@@ -70,7 +69,7 @@ const CloseButton = styled.button`
 const Modal = ({ title, onClose, children }) => {
   return createPortal(
     <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}> {/* Impede que cliques no conteúdo fechem o modal */}
+      <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
           <ModalTitle>{title}</ModalTitle>
           <CloseButton onClick={onClose}>&times;</CloseButton>
@@ -78,7 +77,7 @@ const Modal = ({ title, onClose, children }) => {
         {children}
       </ModalContent>
     </ModalOverlay>,
-    document.body // Anexa o modal diretamente ao body para evitar problemas de z-index
+    document.body
   );
 };
 

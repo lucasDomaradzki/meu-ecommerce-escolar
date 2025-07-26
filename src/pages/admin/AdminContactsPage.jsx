@@ -1,4 +1,3 @@
-// src/pages/admin/AdminContactsPage.jsx
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FaSort, FaSortUp, FaSortDown, FaEdit, FaTrash } from 'react-icons/fa';
@@ -6,7 +5,6 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { allEntities } from '../../data/adminEntities';
 
-// Importe o ContactForm
 import ContactForm from '../../components/admin/ContactForm';
 
 const TableContainer = styled.div`
@@ -69,7 +67,6 @@ const AdminContactsPage = () => {
   const [modalTitle, setModalTitle] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-  // Lógica de ordenação da tabela
   const sortedContacts = useMemo(() => {
     let sortableItems = [...contacts];
     if (sortConfig.key !== null) {
@@ -105,16 +102,13 @@ const AdminContactsPage = () => {
 
   const handleSaveContact = (newOrUpdatedContact) => {
     if (newOrUpdatedContact.id && contacts.some(c => c.id === newOrUpdatedContact.id)) {
-      // Editar contato existente
       setContacts(prevContacts =>
         prevContacts.map(c => (c.id === newOrUpdatedContact.id ? newOrUpdatedContact : c))
       );
     } else {
-      // Adicionar novo contato
-      // Para o mock, garantimos que o ID está sendo gerado no ContactForm
       setContacts(prevContacts => [...prevContacts, newOrUpdatedContact]);
     }
-    setShowModal(false); // Fecha o modal após salvar
+    setShowModal(false);
   };
 
   const handleAddContact = () => {

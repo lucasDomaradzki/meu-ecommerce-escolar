@@ -1,13 +1,11 @@
-// src/pages/admin/AdminSchoolsPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
-import SchoolForm from '../../components/admin/SchoolForm'; // Vamos criar este componente em seguida
-import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos
+import SchoolForm from '../../components/admin/SchoolForm';
+import { v4 as uuidv4 } from 'uuid';
 
-// Dados mockados de escolas
 const mockSchools = [
   { id: 'SCH001', name: 'Escola Modelo Ltda', address: 'Rua das Acácias, 100', phone: '1123456789', email: 'contato@escolamodelo.com.br', contactPerson: 'Diretora Maria' },
   { id: 'SCH002', name: 'Colégio Futuro', address: 'Av. Liberdade, 500', phone: '21987654321', email: 'secretaria@colegiofuturo.com', contactPerson: 'Coordenador Pedro' },
@@ -71,10 +69,10 @@ const TableContainer = styled(Card)`
 const AdminSchoolsPage = () => {
   const [schools, setSchools] = useState(mockSchools);
   const [showModal, setShowModal] = useState(false);
-  const [editingSchool, setEditingSchool] = useState(null); // Para armazenar a escola sendo editada
+  const [editingSchool, setEditingSchool] = useState(null);
 
   const handleAddSchool = () => {
-    setEditingSchool(null); // Garante que é um novo cadastro
+    setEditingSchool(null);
     setShowModal(true);
   };
 
@@ -92,12 +90,10 @@ const AdminSchoolsPage = () => {
 
   const handleSaveSchool = (newSchool) => {
     if (editingSchool) {
-      // Edição
       setSchools(schools.map(sch => sch.id === newSchool.id ? newSchool : sch));
       alert('Escola atualizada com sucesso (simulado)!');
     } else {
-      // Novo cadastro
-      const id = uuidv4(); // Gera um ID único usando UUID
+      const id = uuidv4();
       setSchools([...schools, { ...newSchool, id }]);
       alert('Escola cadastrada com sucesso (simulado)!');
     }

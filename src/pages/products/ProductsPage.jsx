@@ -1,4 +1,3 @@
-// src/pages/products/ProductsPage.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,7 +5,6 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import { useCart } from '../../context/CartContext';
 
-// Importa a imagem fixa temporariamente
 import mochilaRosa from '../../assets/f59585fa6f5daaefae9aeae538c23cd3-mochila-escolar-rosa-plana.webp';
 
 const ProductsPageContainer = styled.div`
@@ -130,8 +128,6 @@ const ProductsPage = () => {
   }, [schoolId, gradeId]);
 
   const handleAddToCart = (product, quantity = 1) => {
-    // Para adicionar ao carrinho, vamos passar o produto com um estoque padrão de 0,
-    // já que o backend ainda não fornece essa informação para este endpoint.
     const productWithDefaultStock = { ...product, stock: 0 };
     addToCart(productWithDefaultStock, quantity);
   };
@@ -156,7 +152,6 @@ const ProductsPage = () => {
   if (packages.length === 0) {
     return (
       <ProductsPageContainer>
-        {/* Mantém o header fixo mesmo sem pacotes */}
         <HeaderContainer>
           <PageTitle>Nossos Pacotes e Produtos</PageTitle>
           <PageSubtitle>Descubra a variedade de kits escolares e produtos individuais que oferecemos.</PageSubtitle>
@@ -170,7 +165,6 @@ const ProductsPage = () => {
   return (
     <ProductsPageContainer>
       <HeaderContainer>
-        {/* HEADER FIXO - CONFORME SOLICITADO */}
         <PageTitle>Nossos Pacotes e Produtos</PageTitle>
         <PageSubtitle>Descubra a variedade de kits escolares e produtos individuais que oferecemos.</PageSubtitle>
       </HeaderContainer>
@@ -181,11 +175,9 @@ const ProductsPage = () => {
             ? parseFloat(pkg.price).toFixed(2).replace('.', ',')
             : 'N/A';
 
-          // A API ainda não retorna 'stock', então ele será sempre 0
-          // Removida a condição do botão para sempre exibi-lo
           const stock = pkg.stock != null ? pkg.stock : 0;
-          const isLowStock = stock > 0 && stock <= 10; // Esta lógica de estilo permanece para quando o stock for adicionado
-          const stockMessage = `Em estoque: ${stock} unidades`; // A mensagem permanece "0 unidades"
+          const isLowStock = stock > 0 && stock <= 10;
+          const stockMessage = `Em estoque: ${stock} unidades`;
 
           return (
             <Card key={pkg.id} $hoverable={true}>
@@ -196,11 +188,9 @@ const ProductsPage = () => {
                 {stockMessage}
               </StockInfo>
               <ButtonGroup>
-                {/* BOTÃO "ADICIONAR AO CARRINHO" AGORA SEMPRE VISÍVEL */}
                 <Button $primary onClick={() => handleAddToCart(pkg)}>
                   Adicionar ao Carrinho
                 </Button>
-                {/* Botão "Ver Detalhes" mantido */}
                 <Button $outline onClick={() => navigate(`/pacotes/${pkg.id}`)}>
                   Ver Detalhes
                 </Button>

@@ -1,9 +1,8 @@
-// src/pages/checkout/CheckoutPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
-import { useCart } from '../../context/CartContext'; // Para limpar o carrinho
+import { useCart } from '../../context/CartContext';
 
 const CheckoutContainer = styled.div`
   padding: 40px 0;
@@ -115,7 +114,6 @@ const CheckoutPage = () => {
       return;
     }
 
-    // Aqui você enviaria os dados para um backend real
     console.log('Dados do Pedido:', {
       items: cartItems,
       total: getCartTotal(),
@@ -123,8 +121,8 @@ const CheckoutPage = () => {
     });
 
     alert('Compra finalizada com sucesso! Seu pedido foi registrado.');
-    clearCart(); // Limpa o carrinho após a compra
-    navigate('/'); // Redireciona para a página inicial
+    clearCart();
+    navigate('/');
   };
 
   return (

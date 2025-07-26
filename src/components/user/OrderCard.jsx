@@ -1,4 +1,3 @@
-// src/components/user/OrderCard.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -34,7 +33,7 @@ const OrderId = styled.h3`
 
 const Status = styled.span`
   background-color: ${props => {
-    switch (props.$status) { // Usando $ para styled-components props
+    switch (props.$status) {
       case 'PENDING': return 'var(--color-warning)';
       case 'PROCESSING': return 'var(--color-info)';
       case 'SHIPPED': return 'var(--color-secondary)';
@@ -64,7 +63,7 @@ const Total = styled.p`
 `;
 
 const OrderCard = ({ order }) => {
-  if (!order) return null; // Garante que o componente não renderiza se 'order' for nulo
+  if (!order) return null;
 
   return (
     <Card to={`/pedidos/${order.id}`}>
@@ -75,7 +74,7 @@ const OrderCard = ({ order }) => {
       <Info>Distribuídor: {order.distributorName || 'N/A'}</Info>
       <Info>Data do Pedido: {order.orderDate || 'N/A'}</Info>
       <Info>Status: {order.status || 'N/A'}</Info>
-      <Total>Total: R$ {(order.total || 0).toFixed(2)}</Total> {/* CORREÇÃO AQUI */}
+      <Total>Total: R$ {(order.total || 0).toFixed(2)}</Total>
     </Card>
   );
 };

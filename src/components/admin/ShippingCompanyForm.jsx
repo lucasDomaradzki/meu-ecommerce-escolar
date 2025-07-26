@@ -1,4 +1,3 @@
-// src/components/admin/ShippingCompanyForm.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -49,7 +48,6 @@ const ShippingCompanyForm = ({ company, onSave, onClose }) => {
     serviceAreas: '',
   });
 
-  // Preenche o formulário se uma empresa estiver sendo editada
   useEffect(() => {
     if (company) {
       setFormData({
@@ -60,7 +58,6 @@ const ShippingCompanyForm = ({ company, onSave, onClose }) => {
         serviceAreas: company.serviceAreas || '',
       });
     } else {
-      // Limpa o formulário se for um novo cadastro
       setFormData({
         name: '',
         contactPerson: '',
@@ -81,7 +78,7 @@ const ShippingCompanyForm = ({ company, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...formData, id: company ? company.id : null }); // Passa o ID se for edição
+    onSave({ ...formData, id: company ? company.id : null });
   };
 
   return (

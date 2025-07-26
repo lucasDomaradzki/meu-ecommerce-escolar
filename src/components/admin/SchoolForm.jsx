@@ -1,4 +1,3 @@
-// src/components/admin/SchoolForm.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -49,7 +48,6 @@ const SchoolForm = ({ school, onSave, onClose }) => {
     contactPerson: '',
   });
 
-  // Preenche o formulário se uma escola estiver sendo editada
   useEffect(() => {
     if (school) {
       setFormData({
@@ -60,7 +58,6 @@ const SchoolForm = ({ school, onSave, onClose }) => {
         contactPerson: school.contactPerson || '',
       });
     } else {
-      // Limpa o formulário se for um novo cadastro
       setFormData({
         name: '',
         address: '',
@@ -81,7 +78,7 @@ const SchoolForm = ({ school, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...formData, id: school ? school.id : null }); // Passa o ID se for edição
+    onSave({ ...formData, id: school ? school.id : null });
   };
 
   return (

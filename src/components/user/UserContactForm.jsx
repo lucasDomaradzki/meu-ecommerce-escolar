@@ -1,4 +1,3 @@
-// src/components/user/UserContactForm.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -88,7 +87,7 @@ const UserContactForm = ({ contact, onSave, onCancel }) => {
     email: '',
     preferable_contact_time: '',
     relationship: '',
-    ...contact // Preenche com dados existentes se for uma edição
+    ...contact
   });
 
   useEffect(() => {
@@ -105,7 +104,6 @@ const UserContactForm = ({ contact, onSave, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
-    // Limpa o formulário após salvar se não for uma edição (novo contato)
     if (!contact) {
       setFormData({
         name: '',

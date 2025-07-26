@@ -1,4 +1,3 @@
-// src/pages/home/HomePage.jsx
 import React from 'react';
 import styled from 'styled-components';
 
@@ -33,7 +32,6 @@ const HomePage = () => {
         Descubra os melhores pacotes e materiais para o seu ano letivo.
         Tudo o que você precisa em um só lugar!
       </Subtitle>
-      {/* Futuramente, botões para ver pacotes, etc. */}
     </HomeContainer>
   );
 };

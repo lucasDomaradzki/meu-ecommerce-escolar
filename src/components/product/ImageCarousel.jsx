@@ -1,4 +1,3 @@
-// src/components/product/ImageCarousel.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';

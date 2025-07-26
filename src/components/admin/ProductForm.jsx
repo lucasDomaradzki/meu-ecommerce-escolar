@@ -1,8 +1,7 @@
-// src/components/admin/ProductForm.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
-import { allEntities } from '../../data/adminEntities'; // Importa todas as entidades para as seleções
+import { allEntities } from '../../data/adminEntities';
 
 const FormContainer = styled.form`
   display: flex;
@@ -81,7 +80,6 @@ const ProductForm = ({ product, onSave, onClose }) => {
     product_category_id: product?.product_category_id || '',
   });
 
-  // Atualiza o formulário se o produto a ser editado mudar
   useEffect(() => {
     if (product) {
       setFormData({
@@ -101,7 +99,6 @@ const ProductForm = ({ product, onSave, onClose }) => {
         product_category_id: product.product_category_id,
       });
     } else {
-      // Limpa o formulário se não houver produto para edição (novo produto)
       setFormData({
         id: '', name: '', product_brand_id: '', description: '', theme: '', color: '',
         dimensions: '', weight: '', supplier_id: '', supplier_price: '', final_price: '',
@@ -121,7 +118,6 @@ const ProductForm = ({ product, onSave, onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validações básicas
     if (!formData.name || !formData.product_brand_id || !formData.description ||
         !formData.weight || !formData.supplier_id || !formData.supplier_price ||
         !formData.final_price || !formData.product_category_id) {
@@ -149,7 +145,6 @@ const ProductForm = ({ product, onSave, onClose }) => {
 
     onSave({
       ...formData,
-      // Converte valores numéricos para number
       weight: parseFloat(formData.weight),
       supplier_price: parseFloat(formData.supplier_price),
       final_price: parseFloat(formData.final_price),

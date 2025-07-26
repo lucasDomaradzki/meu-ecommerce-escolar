@@ -1,8 +1,7 @@
-// src/components/user/ChangePasswordForm.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
-import Input from '../common/Input'; // Reutilizando o Input genérico
+import Input from '../common/Input';
 
 const FormContainer = styled.form`
   display: flex;
@@ -55,9 +54,6 @@ const ChangePasswordForm = ({ onSave, onClose }) => {
       setError('A nova senha deve ter no mínimo 6 caracteres.');
       return;
     }
-    // Em um app real, você verificaria a senha atual com o backend
-    // E também faria a validação de força da senha.
-
     onSave({ currentPassword, newPassword });
   };
 

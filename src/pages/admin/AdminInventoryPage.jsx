@@ -1,4 +1,3 @@
-// src/pages/admin/AdminInventoryPage.jsx
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSort, FaSortUp, FaSortDown, FaEdit, FaTrash } from 'react-icons/fa';
@@ -105,7 +104,6 @@ const AdminInventoryPage = () => {
   const [filterStatus, setFilterStatus] = useState('Todos');
 
   const getProductName = (productId) => {
-    // Garante que 'products' é um array antes de usar .find()
     const product = Array.isArray(products) ? products.find(p => p.id === productId) : undefined;
     return product ? product.name : 'Produto Desconhecido';
   };

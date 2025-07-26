@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboardPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 
@@ -34,11 +33,6 @@ const AdminDashboardPage = () => {
       <Subtitle>
         Aqui você terá uma visão geral do sistema e acessará as principais funcionalidades.
       </Subtitle>
-      {/* Você pode adicionar mais conteúdo aqui, como:
-          - Cards de resumo (Total de Produtos, Pedidos Pendentes, etc.)
-          - Gráficos
-          - Links rápidos para outras seções do admin
-      */}
       <div style={{ marginTop: '40px', fontSize: '1.1em', color: 'var(--color-text-dark)' }}>
         <p>Use o menu lateral para navegar entre as seções:</p>
         <ul>

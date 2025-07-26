@@ -1,11 +1,8 @@
-// src/pages/SchoolGradeSelectionPage.jsx
-import React, { useState, useEffect } from 'react'; // Adicionado useEffect
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-// import { getSchools, getGrades } from '../data/schoolsAndGrades'; // REMOVER este import
 import Button from '../components/common/Button';
 
-// Estilos existentes (não alterados)
 const SelectionContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -106,28 +103,25 @@ const Select = styled.select`
 `;
 
 const SchoolGradeSelectionPage = () => {
-  const [selectedSchoolUUID, setSelectedSchoolUUID] = useState(''); // Armazenará o UUID da escola selecionada
-  const [selectedGradeUUID, setSelectedGradeUUID] = useState('');   // Armazenará o UUID da série selecionada
-  const [schoolsData, setSchoolsData] = useState([]);               // Armazenará os dados da API
-  const [availableGrades, setAvailableGrades] = useState([]);       // Armazenará as séries da escola selecionada
-  const [loading, setLoading] = useState(true);                     // Estado de carregamento
-  const [error, setError] = useState(null);                         // Estado de erro
+  const [selectedSchoolUUID, setSelectedSchoolUUID] = useState('');
+  const [selectedGradeUUID, setSelectedGradeUUID] = useState('');
+  const [schoolsData, setSchoolsData] = useState([]);
+  const [availableGrades, setAvailableGrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Função para buscar dados da API
   useEffect(() => {
     const fetchSchoolsAndGrades = async () => {
       try {
         setLoading(true);
-        // Substitua 'http://localhost:8080/api/schools-with-grades' pela sua URL da API
-        // Certifique-se de que a API retorne o formato JSON que você mostrou
         const response = await fetch('http://localhost:8080/v1/school'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setSchoolsData(data);
-        setError(null); // Limpa qualquer erro anterior
+        setError(null);
       } catch (err) {
         console.error("Erro ao buscar escolas e séries:", err);
         setError("Não foi possível carregar as escolas e séries. Tente novamente mais tarde.");
@@ -137,28 +131,26 @@ const SchoolGradeSelectionPage = () => {
     };
 
     fetchSchoolsAndGrades();
-  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez ao montar o componente
+  }, []);
 
-  // Atualiza as séries disponíveis quando a escola selecionada muda
   useEffect(() => {
     if (selectedSchoolUUID) {
       const school = schoolsData.find(s => s.schoolId === selectedSchoolUUID);
       if (school) {
         setAvailableGrades(school.grades);
       } else {
-        setAvailableGrades([]); // Limpa as séries se a escola não for encontrada (erro ou reset)
+        setAvailableGrades([]);
       }
-      setSelectedGradeUUID(''); // Reseta a série selecionada ao mudar a escola
+      setSelectedGradeUUID('');
     } else {
-      setAvailableGrades([]); // Nenhuma escola selecionada, nenhuma série disponível
+      setAvailableGrades([]);
       setSelectedGradeUUID('');
     }
-  }, [selectedSchoolUUID, schoolsData]); // Depende de selectedSchoolUUID e schoolsData
+  }, [selectedSchoolUUID, schoolsData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedSchoolUUID && selectedGradeUUID) {
-      // Passa os UUIDs para a página de pacotes
       navigate('/pacotes', { state: { schoolId: selectedSchoolUUID, gradeId: selectedGradeUUID } });
     } else {
       alert('Por favor, selecione a escola e a série.');
@@ -209,7 +201,7 @@ const SchoolGradeSelectionPage = () => {
             value={selectedGradeUUID}
             onChange={(e) => setSelectedGradeUUID(e.target.value)}
             required
-            disabled={!selectedSchoolUUID} // Desabilita o dropdown de série se nenhuma escola for selecionada
+            disabled={!selectedSchoolUUID}
           >
             <option value="">Selecione a Série</option>
             {availableGrades.map((grade) => (

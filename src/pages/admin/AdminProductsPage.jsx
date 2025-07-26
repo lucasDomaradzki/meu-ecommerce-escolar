@@ -1,15 +1,9 @@
-// src/pages/admin/AdminProductsPage.jsx
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FaEye, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import Button from '../../components/common/Button';
-import Modal from '../../components/common/Modal'; // Se você usa um modal para adicionar/editar produtos
-import { allEntities } from '../../data/adminEntities'; // <--- Garanta que esta importação existe e está correta
-
-// Você precisará de componentes ProductForm e ProductDetails,
-// mas vamos focar no erro do 'map' primeiro.
-// import ProductForm from '../../components/admin/ProductForm';
-// import ProductDetails from '../../components/admin/ProductDetails';
+import Modal from '../../components/common/Modal';
+import { allEntities } from '../../data/adminEntities';
 
 const TableContainer = styled.div`
   background-color: var(--color-white);
@@ -66,15 +60,12 @@ const ActionsCell = styled.td`
 `;
 
 const AdminProductsPage = () => {
-  // Use um estado para armazenar os produtos. Inicialize com os dados mockados de allEntities.
-  // Certifique-se de que `allEntities.products` existe e é um array.
-  const [products, setProducts] = useState(allEntities.products || []); // <--- Garanta que 'products' é um array
+  const [products, setProducts] = useState(allEntities.products || []);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalTitle, setModalTitle] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-  // Função de ordenação (similar à que usamos para Pedidos)
   const sortedProducts = useMemo(() => {
     let sortableItems = [...products];
     if (sortConfig.key !== null) {
@@ -107,32 +98,20 @@ const AdminProductsPage = () => {
 
   const handleAddItem = () => {
     setModalTitle("Adicionar Novo Produto");
-    // Você precisará de um ProductForm aqui
-    // setModalContent(<ProductForm onSubmitSuccess={() => { /* recarregar produtos */ setShowModal(false); }} />);
     setShowModal(true);
   };
 
   const handleEditItem = (item) => {
     setModalTitle("Editar Produto");
-    // Você precisará de um ProductForm aqui, passando o item para edição
-    // setModalContent(<ProductForm product={item} onSubmitSuccess={() => { /* recarregar produtos */ setShowModal(false); }} />);
     setShowModal(true);
   };
 
   const handleDeleteItem = (id) => {
     if (window.confirm(`Tem certeza que deseja excluir o produto com ID: ${id}?`)) {
-      // Lógica para deletar produto (ex: filtrar o array, chamar API)
       setProducts(products.filter(product => product.id !== id));
       alert("Produto excluído com sucesso!");
     }
   };
-
-  // Se você tiver uma função para visualizar detalhes, seria algo como:
-  // const handleViewDetails = (item) => {
-  //   setModalTitle("Detalhes do Produto");
-  //   setModalContent(<ProductDetails product={item} />);
-  //   setShowModal(true);
-  // };
 
   return (
     <TableContainer>
@@ -152,7 +131,6 @@ const AdminProductsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {/* AQUI É ONDE O ERRO 'map' PROVAVELMENTE OCORRE */}
           {sortedProducts.length > 0 ? (
             sortedProducts.map((product) => (
               <tr key={product.id}>
@@ -161,9 +139,6 @@ const AdminProductsPage = () => {
                 <td>{product.category}</td>
                 <td>R$ {product.price ? product.price.toFixed(2) : 'N/A'}</td>
                 <ActionsCell>
-                  {/* <Button variant="secondary" onClick={() => handleViewDetails(product)}>
-                    <FaEye />
-                  </Button> */}
                   <Button onClick={() => handleEditItem(product)}>Editar</Button>
                   <Button variant="danger" onClick={() => handleDeleteItem(product.id)}>Excluir</Button>
                 </ActionsCell>

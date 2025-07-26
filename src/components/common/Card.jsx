@@ -1,4 +1,3 @@
-// src/components/common/Card.jsx
 import styled from 'styled-components';
 
 const Card = styled.div`

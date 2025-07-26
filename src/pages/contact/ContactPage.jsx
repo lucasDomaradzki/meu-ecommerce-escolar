@@ -1,9 +1,6 @@
-// src/pages/contact/ContactPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
-
-// ... (seus Styled Components aqui) ...
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -40,14 +37,12 @@ const ContactPage = () => {
       <Section>
         <SectionTitle>Envie-nos uma Mensagem</SectionTitle>
         <Form onSubmit={handleSubmit}>
-          {/* ... seus FormGroups ... */}
-
-          <Button $primary type="submit">Enviar Mensagem</Button> {/* Usar $primary */}
+          
+          <Button $primary type="submit">Enviar Mensagem</Button>
         </Form>
       </Section>
 
-      {/* ... ContactInfo ... */}
-    </ContactContainer>
+      </ContactContainer>
   );
 };
 

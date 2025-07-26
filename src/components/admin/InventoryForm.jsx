@@ -1,4 +1,3 @@
-// src/components/admin/InventoryForm.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -81,7 +80,6 @@ const InventoryForm = ({ item, products, onSave, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // UseEffect para inicializar o formulário quando o 'item' prop muda (para edição)
   useEffect(() => {
     if (item) {
       setFormData({
@@ -93,11 +91,9 @@ const InventoryForm = ({ item, products, onSave, onClose }) => {
         status: item.status || 'AVAILABLE',
         lastUpdate: item.lastUpdate || new Date().toLocaleString(),
       });
-      // Ao editar, preenche o campo de busca com o nome do produto
       const productName = products.find(p => p.id === item.productId)?.name || '';
       setSearchTerm(productName);
     } else {
-      // Resetar para um novo item
       setFormData({
         id: generateUniqueId(),
         productId: '',
@@ -111,12 +107,11 @@ const InventoryForm = ({ item, products, onSave, onClose }) => {
     }
   }, [item, products]);
 
-  // Efeito para ajustar o status com base na quantidade disponível
   useEffect(() => {
     let newStatus = 'AVAILABLE';
     if (formData.quantityAvailable === 0) {
       newStatus = 'OUT_OF_STOCK';
-    } else if (formData.quantityAvailable > 0 && formData.quantityAvailable <= 10) { // Exemplo: estoque baixo se <= 10
+    } else if (formData.quantityAvailable > 0 && formData.quantityAvailable <= 10) {
       newStatus = 'LOW_STOCK';
     }
     if (formData.status !== newStatus) {
@@ -135,7 +130,6 @@ const InventoryForm = ({ item, products, onSave, onClose }) => {
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
     setShowSuggestions(true);
-    // Limpa o productId se o texto de busca não corresponder a um produto selecionado
     setFormData(prevData => ({ ...prevData, productId: '' }));
   }, []);
 
@@ -176,13 +170,13 @@ const InventoryForm = ({ item, products, onSave, onClose }) => {
           value={searchTerm}
           onChange={handleSearchChange}
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 100)} // Pequeno delay para permitir clique nas sugestões
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
           required
         />
         {showSuggestions && filteredProducts.length > 0 && (
           <div className="product-suggestions">
             {filteredProducts.map(product => (
-              <div key={product.id} onMouseDown={() => handleSelectProduct(product)}> {/* Usar onMouseDown para capturar o clique antes do onBlur */}
+              <div key={product.id} onMouseDown={() => handleSelectProduct(product)}>
                 {product.name}
               </div>
             ))}

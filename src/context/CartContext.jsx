@@ -1,4 +1,3 @@
-// src/context/CartContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 export const CartContext = createContext();
@@ -17,13 +16,11 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Função para adicionar item ao carrinho
   const addToCart = (product, quantity = 1) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
 
       if (existingItem) {
-        // Se o item já existe, cria um novo array com a quantidade atualizada
         const updatedItems = prevItems.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
@@ -31,7 +28,6 @@ export const CartProvider = ({ children }) => {
         );
         return updatedItems;
       } else {
-        // Se o item não existe, cria um novo array adicionando o novo item
         return [...prevItems, { ...product, quantity }];
       }
     });

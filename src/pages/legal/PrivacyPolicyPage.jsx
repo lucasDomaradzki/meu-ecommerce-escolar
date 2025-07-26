@@ -1,4 +1,3 @@
-// src/pages/legal/PrivacyPolicyPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 
@@ -131,7 +130,6 @@ const PrivacyPolicyPage = () => {
         </Paragraph>
       </Section>
 
-      {/* Seção 7: Contato - Removido ContactInfo e simplificado */}
       <Section>
         <SectionTitle>7. Contato</SectionTitle>
         <Paragraph>

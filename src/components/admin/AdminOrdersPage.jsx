@@ -1,4 +1,3 @@
-// src/pages/admin/AdminOrdersPage.jsx
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FaEye, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
@@ -6,7 +5,7 @@ import Button from '../../components/common/Button';
 import { allEntities } from '../../data/adminEntities';
 import Modal from '../../components/common/Modal';
 import OrderDetails from './OrderDetails';
-import OrderForm from './OrderForm'; // Importa o novo formulário
+import OrderForm from './OrderForm';
 
 const PageContainer = styled.div`
   padding: 20px;
@@ -254,9 +253,6 @@ const AdminOrdersPage = () => {
   }, [allOrders, filters, sortConfig, orderTypes, users, distributors, shippingCompanies, contacts]);
 
   const handleViewDetails = (order) => {
-    // Para garantir que o order.user_name seja preenchido para exibição no modal,
-    // embora ele não esteja diretamente na modelagem da tabela, é útil para o mock.
-    // Em um cenário real, você buscaria o nome do user/distribuidor.
     const orderTypeName = getOrderTypeName(order.order_type_id);
     const userOrDistName = getUserOrDistributorName(order);
     const shippingCompanyName = getShippingCompanyName(order.shipping_company_id);
@@ -286,13 +282,9 @@ const AdminOrdersPage = () => {
   };
 
   const handleSaveNewOrder = (newOrder) => {
-    // Lógica para adicionar o novo pedido ao mock (em um app real, seria uma chamada à API)
-    // Para simplificar, adicionamos diretamente ao mock allEntities.order
     allEntities.order.push(newOrder);
     alert('Pedido de estoque criado com sucesso!');
     handleCloseCreateModal();
-    // Você pode querer forçar uma re-renderização se estiver usando um estado global,
-    // mas para este mock simples, o useMemo já recalculará.
   };
 
   return (

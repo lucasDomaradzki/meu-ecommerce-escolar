@@ -1,8 +1,7 @@
-// src/components/admin/OrderForm.jsx
-import React, { useState, useEffect, useMemo, useCallback } from 'react'; // Adicionado useMemo, useCallback
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
-import { allEntities } from '../../data/adminEntities'; // Importa todas as entidades mockadas
+import { allEntities } from '../../data/adminEntities';
 
 const FormContainer = styled.form`
   display: flex;
@@ -72,18 +71,17 @@ const OrderForm = ({ order, onSave, onClose }) => {
     contactPersonId: '',
     deliveryAddress: '',
     shippingCompanyId: '',
-    status: 'PENDING', // Default status
-    orderDate: new Date().toISOString().split('T')[0], // Current date (YYYY-MM-DD)
+    status: 'PENDING',
+    orderDate: new Date().toISOString().split('T')[0],
     deliveryDate: '',
-    items: [], // [{ productId, quantity, price, productName }]
+    items: [],
     trackingCode: '',
     total: 0,
-    distributorName: '', // Para exibição
-    contactPersonName: '', // Para exibição
-    shippingCompanyName: '', // Para exibição
+    distributorName: '',
+    contactPersonName: '',
+    shippingCompanyName: '',
   });
 
-  // Listas de dados para os selects, carregadas uma vez
   const availableDistributors = useMemo(() => allEntities.suppliers || [], []);
   const availableShippingCompanies = useMemo(() => allEntities.shippingCompanies || [], []);
   const availableProducts = useMemo(() => allEntities.products || [], []);
@@ -92,11 +90,10 @@ const OrderForm = ({ order, onSave, onClose }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
 
 
-  // UseEffect para inicializar o formulário com dados do pedido (para edição)
   useEffect(() => {
     if (order) {
       setFormData({
-        id: order.id || generateOrderId(), // Garante ID para o caso de algum mock não ter
+        id: order.id || generateOrderId(),
         distributorId: order.distributorId || '',
         contactPersonId: order.contactPersonId || '',
         deliveryAddress: order.deliveryAddress || '',
@@ -108,13 +105,12 @@ const OrderForm = ({ order, onSave, onClose }) => {
         trackingCode: order.trackingCode || '',
         total: order.total || 0,
         distributorName: order.distributorName || '',
-        contactPersonName: order.contactPersonName || '', // Corrigido para contactPersonName
+        contactPersonName: order.contactPersonName || '',
         shippingCompanyName: order.shippingCompanyName || '',
       });
     } else {
-      // Resetar para novo pedido se 'order' for nulo (modo de adição)
       setFormData({
-        id: generateOrderId(), // Garante novo ID para adição
+        id: generateOrderId(),
         distributorId: '',
         contactPersonId: '',
         deliveryAddress: '',
@@ -130,25 +126,21 @@ const OrderForm = ({ order, onSave, onClose }) => {
         shippingCompanyName: '',
       });
     }
-  }, [order]); // Roda quando 'order' prop muda
+  }, [order]);
 
-  // UseEffect para filtrar contatos e preencher nomes
   useEffect(() => {
-    // FILTRA CONTATOS com base no distribuidor selecionado
     if (formData.distributorId) {
       const distributorRelatedContacts = allContacts.filter(
         c => c.entityType === 'supplier' && c.entityId === formData.distributorId
       );
       setFilteredContacts(distributorRelatedContacts);
 
-      // Atualiza o nome do distribuidor
       const distributor = availableDistributors.find(d => d.id === formData.distributorId);
       setFormData(prev => ({
         ...prev,
         distributorName: distributor ? distributor.name : '',
-        // Se o contato selecionado não pertencer ao novo distribuidor, resetar
         contactPersonId: distributorRelatedContacts.some(c => c.id === prev.contactPersonId) ? prev.contactPersonId : '',
-        contactPersonName: '' // Resetar nome do contato também
+        contactPersonName: ''
       }));
     } else {
       setFilteredContacts([]);
@@ -159,30 +151,24 @@ const OrderForm = ({ order, onSave, onClose }) => {
         contactPersonName: ''
       }));
     }
-  }, [formData.distributorId, availableDistributors, allContacts]); // Depende do ID do distribuidor e das listas de dados
+  }, [formData.distributorId, availableDistributors, allContacts]);
 
-  // UseEffect para preencher contactPersonName e shippingCompanyName (quando IDs são selecionados)
   useEffect(() => {
-    // Preenche contactPersonName
     const selectedContact = filteredContacts.find(c => c.id === formData.contactPersonId);
     setFormData(prev => ({ ...prev, contactPersonName: selectedContact ? selectedContact.name : '' }));
 
-    // Preenche shippingCompanyName
     const selectedCompany = availableShippingCompanies.find(s => s.id === formData.shippingCompanyId);
     setFormData(prev => ({ ...prev, shippingCompanyName: selectedCompany ? selectedCompany.name : '' }));
 
   }, [formData.contactPersonId, formData.shippingCompanyId, filteredContacts, availableShippingCompanies]);
 
 
-  // UseEffect para recalcular o total quando os itens mudam
-  // Este useEffect já estava na sua versão anterior e está correto.
   useEffect(() => {
     const newTotal = formData.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
     setFormData(prev => ({ ...prev, total: newTotal }));
   }, [formData.items]);
 
 
-  // Handlers de mudança memorizados com useCallback
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -192,17 +178,15 @@ const OrderForm = ({ order, onSave, onClose }) => {
     const { name, value } = e.target;
     const list = [...formData.items];
     
-    // Tratamento para quantity: garante que é um número
-    list[index] = { ...list[index], [name]: name === 'quantity' ? parseInt(value, 10) || 0 : value }; // ParseInt com base 10 e fallback para 0
+    list[index] = { ...list[index], [name]: name === 'quantity' ? parseInt(value, 10) || 0 : value };
 
-    // Se o produto for selecionado, preenche o preço e o nome do produto
     if (name === 'productId') {
       const selectedProduct = availableProducts.find(p => p.id === value);
       if (selectedProduct) {
         list[index].price = selectedProduct.price;
         list[index].productName = selectedProduct.name;
       } else {
-        list[index].price = 0; // Se o produto não for encontrado, o preço é 0
+        list[index].price = 0;
         list[index].productName = '';
       }
     }
@@ -228,7 +212,7 @@ const OrderForm = ({ order, onSave, onClose }) => {
       alert('Por favor, preencha todos os campos obrigatórios e adicione pelo menos um produto.');
       return;
     }
-    onSave(formData); // Chama a função onSave passada via prop
+    onSave(formData);
   }, [formData, onSave]);
 
   return (
@@ -255,7 +239,6 @@ const OrderForm = ({ order, onSave, onClose }) => {
         value={formData.contactPersonId}
         onChange={handleChange}
         required
-        // Desabilitar se nenhum distribuidor for selecionado ou não houver contatos filtrados
         disabled={!formData.distributorId || filteredContacts.length === 0}
       >
         <option value="">Selecione um contato</option>
@@ -335,7 +318,7 @@ const OrderForm = ({ order, onSave, onClose }) => {
       <div className="item-list">
         {formData.items.length === 0 && <p>Nenhum produto adicionado.</p>}
         {formData.items.map((item, index) => (
-          <div key={index} className="item-row"> {/* Usar index como key é aceitável se os itens não forem reordenados/removidos frequentemente */}
+          <div key={index} className="item-row">
             <select
               name="productId"
               value={item.productId}

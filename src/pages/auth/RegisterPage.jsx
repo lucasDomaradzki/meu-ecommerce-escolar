@@ -1,4 +1,3 @@
-// src/pages/auth/RegisterPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -62,7 +61,6 @@ const RegisterPage = () => {
       alert('As senhas não coincidem!');
       return;
     }
-    // Lógica de registro virá aqui
     console.log('Register attempt:', { name, email, password });
     alert(`Cadastro de ${email} (Ainda não implementado!)`);
   };

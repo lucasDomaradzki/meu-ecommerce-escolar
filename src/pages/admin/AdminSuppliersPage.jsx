@@ -1,13 +1,11 @@
-// src/pages/admin/AdminSuppliersPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import SupplierForm from '../../components/admin/SupplierForm';
-import { v4 as uuidv4 } from 'uuid'; // Importa a função v4 para gerar UUIDs
+import { v4 as uuidv4 } from 'uuid';
 
-// Dados mockados de distribuidores
 const mockSuppliers = [
   { id: 'SUP001', name: 'Distribuidora Alfa', contactPerson: 'Ana Silva', phone: '11987654321', email: 'contato@alfa.com', address: 'Rua das Flores, 123' },
   { id: 'SUP002', name: 'Beta Suprimentos', contactPerson: 'Bruno Costa', phone: '21912345678', email: 'vendas@beta.com', address: 'Av. Central, 456' },
@@ -71,10 +69,10 @@ const TableContainer = styled(Card)`
 const AdminSuppliersPage = () => {
   const [suppliers, setSuppliers] = useState(mockSuppliers);
   const [showModal, setShowModal] = useState(false);
-  const [editingSupplier, setEditingSupplier] = useState(null); // Para armazenar o distribuidor sendo editado
+  const [editingSupplier, setEditingSupplier] = useState(null);
 
   const handleAddSupplier = () => {
-    setEditingSupplier(null); // Garante que é um novo cadastro
+    setEditingSupplier(null);
     setShowModal(true);
   };
 
@@ -92,11 +90,9 @@ const AdminSuppliersPage = () => {
 
   const handleSaveSupplier = (newSupplier) => {
     if (editingSupplier) {
-      // Edição
       setSuppliers(suppliers.map(sup => sup.id === newSupplier.id ? newSupplier : sup));
       alert('Distribuidor atualizado com sucesso (simulado)!');
     } else {
-      // Novo cadastro - ID gerado com uuidv4()
       const id = uuidv4(); // Gerar um ID único universal
       setSuppliers([...suppliers, { ...newSupplier, id }]);
       alert('Distribuidor cadastrado com sucesso (simulado)!');
@@ -125,8 +121,6 @@ const AdminSuppliersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Remova espaços ou quebras de linha extra entre <td> e seus conteúdos aqui */}
-            {/* A alteração mais provável é apenas a formatação do código, mas deixarei o snippet abaixo mais compacto */}
             {suppliers.map(supplier => (
               <tr key={supplier.id}>
                 <td>{supplier.id}</td><td>{supplier.name}</td><td>{supplier.contactPerson}</td><td>{supplier.phone}</td><td>{supplier.email}</td><td>{supplier.address}</td>

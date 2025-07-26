@@ -1,4 +1,3 @@
-// src/pages/user/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
@@ -244,7 +243,6 @@ const ProfilePage = () => {
                   {address.streetname}, {address.address_number}
                   {address.point_of_reference && `, ${address.point_of_reference}`} 
                 </p>
-                {/* Apenas exibe o bairro. Se quiser cidade e estado, adicione-os ao seu users.js */}
                 <p>{address.neighborhood}</p> 
                 <p>CEP: {address.zipcode}</p> 
                 <div className="address-actions">

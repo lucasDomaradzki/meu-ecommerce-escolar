@@ -1,4 +1,3 @@
-// src/components/admin/AdminSidebar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
@@ -77,67 +76,52 @@ const AdminSidebar = () => {
       <AdminPanelTitle>Painel Admin</AdminPanelTitle>
       <NavList>
         <NavItem>
-          <NavLink to="/admin/dashboard"> {/* Caminho absoluto */}
+          <NavLink to="/admin/dashboard">
             <FaTachometerAlt /> Dashboard
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/admin/produtos"> {/* Caminho absoluto */}
+          <NavLink to="/admin/produtos">
             <FaBox /> Produtos
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/admin/inventario"> {/* Caminho absoluto */}
+          <NavLink to="/admin/inventario">
             <FaBoxes /> Inventário
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/admin/pedidos"> {/* Caminho absoluto */}
+          <NavLink to="/admin/pedidos">
             <FaClipboardList /> Pedidos
           </NavLink>
         </NavItem>
 
         <SectionTitle>Empresas</SectionTitle>
         <NavItem>
-          <NavLink to="/admin/distribuidores"> {/* Caminho absoluto */}
+          <NavLink to="/admin/distribuidores">
             <FaTruck /> Distribuidores
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/admin/empresas-entrega"> {/* Caminho absoluto */}
+          <NavLink to="/admin/empresas-entrega">
             <FaBuilding /> Empresas de Entrega
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/admin/escolas"> {/* Caminho absoluto */}
+          <NavLink to="/admin/escolas">
             <FaBuilding /> Escolas
           </NavLink>
         </NavItem>
 
         <SectionTitle>Contatos</SectionTitle>
         <NavItem>
-          <NavLink to="/admin/contatos"> {/* Caminho absoluto */}
+          <NavLink to="/admin/contatos">
             <FaUserCircle /> Contatos
           </NavLink>
         </NavItem>
-        {/* Você não tem uma página de 'usuários' ainda no App.jsx,
-            então, por enquanto, vamos comentar ou garantir que a rota exista
-        <NavItem>
-          <NavLink to="/admin/users">
-            <FaUsers /> Usuários
-          </NavLink>
-        </NavItem>
-        */}
         
         <SectionTitle>Configurações</SectionTitle>
-        {/* Você não tem uma página de 'settings' ainda no App.jsx,
-            então, por enquanto, vamos comentar ou garantir que a rota exista
-        <NavItem>
-          <NavLink to="/admin/settings">
-            <FaCog /> Configurações
-          </NavLink>
-        </NavItem>
-        */}
+        
       </NavList>
     </SidebarContainer>
   );

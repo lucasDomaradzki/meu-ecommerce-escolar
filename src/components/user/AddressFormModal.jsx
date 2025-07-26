@@ -1,5 +1,4 @@
-// src/components/user/AddressFormModal.jsx
-import React, { useState, useEffect } from 'react'; // Importe useEffect
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
 
@@ -96,15 +95,14 @@ const ButtonContainer = styled.div`
   }
 `;
 
-// Adicionado novo FormGroup para o Label/Tipo de Endereço
 const LabelTypeInput = styled(Input)`
   text-transform: capitalize; /* Capitaliza a primeira letra */
 `;
 
 const AddressFormModal = ({ onClose, onSave, initialData }) => {
   const [addressData, setAddressData] = useState(initialData || {
-    id: null, // Adicione id para rastrear se é uma edição
-    label: '', // Adicione um campo para o rótulo do endereço
+    id: null,
+    label: '',
     street: '',
     number: '',
     complement: '',
@@ -114,7 +112,6 @@ const AddressFormModal = ({ onClose, onSave, initialData }) => {
     zipCode: ''
   });
 
-  // Use useEffect para atualizar o estado interno se initialData mudar
   useEffect(() => {
     if (initialData) {
       setAddressData(initialData);
@@ -143,7 +140,7 @@ const AddressFormModal = ({ onClose, onSave, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(addressData); // Passa o addressData (com ID se for edição)
+    onSave(addressData);
     // onClose(); // Será fechado pelo ProfilePage após o save
   };
 
@@ -151,7 +148,7 @@ const AddressFormModal = ({ onClose, onSave, initialData }) => {
     <ModalOverlay>
       <ModalContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <FormTitle>{addressData.id ? 'Editar Endereço' : 'Adicionar Novo Endereço'}</FormTitle> {/* Título dinâmico */}
+        <FormTitle>{addressData.id ? 'Editar Endereço' : 'Adicionar Novo Endereço'}</FormTitle>
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="label">Tipo de Endereço (ex: Casa, Trabalho):</Label>
@@ -247,7 +244,7 @@ const AddressFormModal = ({ onClose, onSave, initialData }) => {
               Cancelar
             </Button>
             <Button $primary type="submit">
-              {addressData.id ? 'Salvar Alterações' : 'Salvar Endereço'} {/* Texto do botão dinâmico */}
+              {addressData.id ? 'Salvar Alterações' : 'Salvar Endereço'}
             </Button>
           </ButtonContainer>
         </form>

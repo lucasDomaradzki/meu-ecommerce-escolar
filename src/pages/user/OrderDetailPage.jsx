@@ -1,8 +1,7 @@
-// src/pages/user/OrderDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
-import { allEntities } from '../../data/adminEntities'; // Assumindo que você busca o pedido daqui
+import { allEntities } from '../../data/adminEntities';
 import Button from '../../components/common/Button';
 
 const DetailPageContainer = styled.div`
@@ -119,14 +118,13 @@ const OrderDetailPage = () => {
   useEffect(() => {
     const fetchOrder = () => {
       setLoading(true);
-      // Simula o carregamento de dados buscando no mock allEntities.orders
       const foundOrder = allEntities.orders.find(o => o.id === orderId);
       setOrder(foundOrder);
       setLoading(false);
     };
 
     fetchOrder();
-  }, [orderId]); // Roda quando o orderId na URL muda
+  }, [orderId]);
 
   if (loading) {
     return <DetailPageContainer><p>Carregando detalhes do pedido...</p></DetailPageContainer>;
@@ -182,11 +180,11 @@ const OrderDetailPage = () => {
       <ProductsList>
         {order.items && order.items.length > 0 ? (
           order.items.map(item => (
-            <ProductItem key={item.productId}> {/* Assumindo que productId é único para cada item no pedido */}
+            <ProductItem key={item.productId}>
               <ProductName>{item.productName || 'Produto Desconhecido'}</ProductName>
               <ProductDetails>
                 <span>Qtd: {item.quantity || 0}</span>
-                <span>Preço Unitário: R$ {(item.price || 0).toFixed(2)}</span> {/* CORREÇÃO AQUI */}
+                <span>Preço Unitário: R$ {(item.price || 0).toFixed(2)}</span>
               </ProductDetails>
             </ProductItem>
           ))
@@ -198,7 +196,7 @@ const OrderDetailPage = () => {
       <OrderSummary>
         <SummaryItem>
           <Label>Total do Pedido:</Label>
-          <Value>R$ {(order.total || 0).toFixed(2)}</Value> {/* CORREÇÃO AQUI */}
+          <Value>R$ {(order.total || 0).toFixed(2)}</Value>
         </SummaryItem>
       </OrderSummary>
     </DetailPageContainer>

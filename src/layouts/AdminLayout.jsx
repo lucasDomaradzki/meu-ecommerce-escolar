@@ -1,8 +1,7 @@
-// src/layouts/AdminLayout.jsx
 import React from 'react';
 import styled from 'styled-components';
-import { Outlet } from 'react-router-dom'; // Importa Outlet para renderizar as rotas filhas
-import AdminSidebar from '../components/admin/AdminSideBar'; // <--- CAMINHO CORRIGIDO
+import { Outlet } from 'react-router-dom';
+import AdminSidebar from '../components/admin/AdminSideBar';
 
 const AdminLayoutContainer = styled.div`
   display: flex;
@@ -32,13 +31,9 @@ const AdminHeader = styled.header`
 const AdminLayout = () => {
   return (
     <AdminLayoutContainer>
-      <AdminSidebar /> {/* O componente do sidebar é renderizado aqui */}
+      <AdminSidebar />
       <ContentArea>
-        {/* Você pode adicionar um cabeçalho fixo aqui se quiser */}
-        {/* <AdminHeader>
-          Painel de Administração
-        </AdminHeader> */}
-        <Outlet /> {/* Aqui é onde o conteúdo da rota filha (ex: AdminOrdersPage) será renderizado */}
+        <Outlet />
       </ContentArea>
     </AdminLayoutContainer>
   );

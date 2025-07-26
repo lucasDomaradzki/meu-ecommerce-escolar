@@ -1,4 +1,3 @@
-// src/pages/products/ProductDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -6,10 +5,8 @@ import Button from '../../components/common/Button';
 import ImageCarousel from '../../components/product/ImageCarousel';
 import { useCart } from '../../context/CartContext';
 
-// Importa a imagem fixa temporariamente
 import mochilaRosa from '../../assets/f59585fa6f5daaefae9aeae538c23cd3-mochila-escolar-rosa-plana.webp';
 
-// --- Styled Components (Mantenha como estão, exceto Price) ---
 const ProductDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -195,14 +192,13 @@ const ProductDetailPage = () => {
       try {
         setLoading(true);
         setError(null);
-        // Usando o endpoint correto /v1/product/productlist/{id}
         const apiUrl = `http://localhost:8080/v1/product/productlist/${id}`;
-        console.log("Chamando API para detalhes do pacote:", apiUrl); // Log da chamada
+        console.log("Chamando API para detalhes do pacote:", apiUrl);
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
           if (response.status === 404) {
-            navigate('/404'); // Redireciona para 404 se não encontrado
+            navigate('/404');
             return;
           }
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -221,20 +217,17 @@ const ProductDetailPage = () => {
     if (id) {
       fetchProductDetails();
     } else {
-      // Se não houver ID na URL, redireciona para a página de 404
       navigate('/404');
     }
   }, [id, navigate]);
 
   const handleAddToCart = () => {
-    if (product) { // Garante que 'product' existe antes de tentar adicioná-lo
-      // A API não retorna 'stock' neste endpoint, então assumimos 0 para o carrinho por enquanto.
+    if (product) {
       const productWithDefaultStock = { ...product, stock: 0 };
       addToCart(productWithDefaultStock, 1);
     }
   };
 
-  // Renderização condicional para estados de carregamento, erro e produto não encontrado
   if (loading) {
     return (
       <ProductDetailContainer>
@@ -247,7 +240,7 @@ const ProductDetailPage = () => {
     return (
       <ProductDetailContainer>
         <p style={{ color: 'red' }}>{error}</p>
-        <Button onClick={() => navigate('/')}>Voltar para Seleção</Button> {/* REDIRECIONA PARA A TELA INICIAL */}
+        <Button onClick={() => navigate('/')}>Voltar para Seleção</Button>
       </ProductDetailContainer>
     );
   }
@@ -256,18 +249,15 @@ const ProductDetailPage = () => {
       return (
           <ProductDetailContainer>
               <p>Produto não encontrado ou um erro inesperado ocorreu.</p>
-              <Button onClick={() => navigate('/')}>Voltar para Seleção</Button> {/* REDIRECIONA PARA A TELA INICIAL */}
+              <Button onClick={() => navigate('/')}>Voltar para Seleção</Button>
           </ProductDetailContainer>
       );
   }
 
-  // A partir daqui, `product` tem garantia de existir.
-  // Estoque fixo em 0, pois a API ainda não fornece essa informação
   const stock = 0;
-  const isLowStock = false; // Não há estoque real para ser baixo
-  const stockMessage = `Em estoque: ${stock} unidades`; // Será "Em estoque: 0 unidades"
+  const isLowStock = false;
+  const stockMessage = `Em estoque: ${stock} unidades`;
 
-  // Formatação do preço
   const formattedPrice = product.price != null
     ? parseFloat(product.price).toFixed(2).replace('.', ',')
     : 'N/A';
@@ -291,7 +281,6 @@ const ProductDetailPage = () => {
             <Button $primary onClick={handleAddToCart}>
               Adicionar ao Carrinho
             </Button>
-            {/* CORREÇÃO AQUI: BOTÃO "VOLTAR PARA PACOTES" AGORA REDIRECIONA PARA A TELA INICIAL */}
             <Button $outline onClick={() => navigate('/')}>
               Voltar para Seleção
             </Button>
@@ -299,7 +288,6 @@ const ProductDetailPage = () => {
         </InfoSection>
       </ContentWrapper>
 
-      {/* Condicionalmente exibe a seção de itens se 'products' existir e tiver itens */}
       {product.products && product.products.length > 0 && (
         <ItemsIncludedSection>
           <SectionHeader>Itens Inclusos no Pacote:</SectionHeader>

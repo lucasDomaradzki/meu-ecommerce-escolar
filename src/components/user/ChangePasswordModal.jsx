@@ -1,4 +1,3 @@
-// src/components/user/ChangePasswordModal.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -110,7 +109,7 @@ const ChangePasswordModal = ({ onClose, onSave }) => {
       ...prevData,
       [name]: value
     }));
-    setError(''); // Limpa o erro ao digitar
+    setError('');
   };
 
   const handleSubmit = (e) => {
@@ -122,12 +121,11 @@ const ChangePasswordModal = ({ onClose, onSave }) => {
       return;
     }
 
-    if (passwordData.newPassword.length < 6) { // Exemplo de validação
+    if (passwordData.newPassword.length < 6) {
       setError('A nova senha deve ter pelo menos 6 caracteres.');
       return;
     }
 
-    // Em uma aplicação real, você enviaria passwordData para o backend
     onSave(passwordData);
   };
 

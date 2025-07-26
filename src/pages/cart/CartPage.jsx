@@ -1,11 +1,9 @@
-// src/pages/cart/CartPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { useCart } from '../../context/CartContext';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 
-// Styled Components para a CartPage
 const CartContainer = styled.div`
   padding: 40px 0;
   color: var(--color-text);
@@ -236,7 +234,6 @@ const CartPage = () => {
                   <QuantityButton onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</QuantityButton>
                   <Quantity>{item.quantity}</Quantity>
                   <QuantityButton onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}>+</QuantityButton>
-                  {/* RemoveButton já é um styled(Button), então não precisa de $primary se ele já for primary por padrão ou tiver sua própria cor */}
                   <RemoveButton onClick={() => handleRemoveItem(item.id)}>Remover</RemoveButton>
                 </ItemQuantityControls>
                 <ItemSubtotal>R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}</ItemSubtotal>

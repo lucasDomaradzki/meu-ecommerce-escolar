@@ -1,4 +1,3 @@
-// src/components/admin/OrderDetails.jsx
 import React from 'react';
 import styled from 'styled-components';
 
@@ -66,7 +65,6 @@ const OrderDetails = ({ order }) => {
     return <p>Selecione um pedido para ver os detalhes.</p>;
   }
 
-  // Prepara os dados do endereço e contato para exibição
   const addressString = order.address_details
     ? `${order.address_details.street}, ${order.address_details.number}${order.address_details.complement ? `, ${order.address_details.complement}` : ''} - ${order.address_details.neighborhood}, ${order.address_details.city}/${order.address_details.state} - ${order.address_details.zipcode}`
     : 'N/A';

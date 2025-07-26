@@ -1,4 +1,3 @@
-// src/components/admin/SupplierForm.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
@@ -49,7 +48,6 @@ const SupplierForm = ({ supplier, onSave, onClose }) => {
     address: '',
   });
 
-  // Preenche o formulário se um distribuidor estiver sendo editado
   useEffect(() => {
     if (supplier) {
       setFormData({
@@ -60,7 +58,6 @@ const SupplierForm = ({ supplier, onSave, onClose }) => {
         address: supplier.address || '',
       });
     } else {
-      // Limpa o formulário se for um novo cadastro
       setFormData({
         name: '',
         contactPerson: '',
@@ -81,7 +78,7 @@ const SupplierForm = ({ supplier, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...formData, id: supplier ? supplier.id : null }); // Passa o ID se for edição
+    onSave({ ...formData, id: supplier ? supplier.id : null });
   };
 
   return (

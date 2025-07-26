@@ -1,9 +1,7 @@
-// src/pages/user/OrderHistoryPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-// Dados de pedidos simulados
 const mockOrders = [
   {
     id: 'ORD001',

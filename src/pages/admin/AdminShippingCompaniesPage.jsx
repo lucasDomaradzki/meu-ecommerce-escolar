@@ -1,13 +1,11 @@
-// src/pages/admin/AdminShippingCompaniesPage.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
-import ShippingCompanyForm from '../../components/admin/ShippingCompanyForm'; // Vamos criar este componente em seguida
-import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos
+import ShippingCompanyForm from '../../components/admin/ShippingCompanyForm';
+import { v4 as uuidv4 } from 'uuid';
 
-// Dados mockados de empresas de entrega
 const mockShippingCompanies = [
   { id: 'SHP001', name: 'Correios BR', contactPerson: 'Fernanda Lima', phone: '08001234567', email: 'contato@correios.com.br', serviceAreas: 'Nacional' },
   { id: 'SHP002', name: 'Entrega Rápida', contactPerson: 'Gustavo Santos', phone: '11998877665', email: 'sac@entregarapida.com.br', serviceAreas: 'São Paulo, Rio de Janeiro' },
@@ -71,10 +69,10 @@ const TableContainer = styled(Card)`
 const AdminShippingCompaniesPage = () => {
   const [shippingCompanies, setShippingCompanies] = useState(mockShippingCompanies);
   const [showModal, setShowModal] = useState(false);
-  const [editingCompany, setEditingCompany] = useState(null); // Para armazenar a empresa sendo editada
+  const [editingCompany, setEditingCompany] = useState(null);
 
   const handleAddCompany = () => {
-    setEditingCompany(null); // Garante que é um novo cadastro
+    setEditingCompany(null);
     setShowModal(true);
   };
 
@@ -92,12 +90,10 @@ const AdminShippingCompaniesPage = () => {
 
   const handleSaveCompany = (newCompany) => {
     if (editingCompany) {
-      // Edição
       setShippingCompanies(shippingCompanies.map(comp => comp.id === newCompany.id ? newCompany : comp));
       alert('Empresa de entrega atualizada com sucesso (simulado)!');
     } else {
-      // Novo cadastro
-      const id = uuidv4(); // Gera um ID único usando UUID
+      const id = uuidv4();
       setShippingCompanies([...shippingCompanies, { ...newCompany, id }]);
       alert('Empresa de entrega cadastrada com sucesso (simulado)!');
     }

@@ -1,8 +1,7 @@
-// src/components/layout/Header.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaBox } from 'react-icons/fa'; // Importe FaBox para Pedidos
+import { FaShoppingCart, FaUser, FaBox } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 
 const StyledHeader = styled.header`
@@ -111,7 +110,7 @@ const Header = () => {
     <StyledHeader>
       <Logo to="/">📚SchoolKit</Logo>
       <Nav>
-        <NavLink to="/meus-pedidos"> {/* Corrigido: Aponta para a rota existente /meus-pedidos */}
+        <NavLink to="/meus-pedidos">
           <FaBox /> Pedidos
         </NavLink>
         <NavLink to="/perfil">

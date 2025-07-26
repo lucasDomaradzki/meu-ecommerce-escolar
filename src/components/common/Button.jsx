@@ -1,8 +1,7 @@
-// src/components/common/Button.jsx
 import styled from 'styled-components';
 
 const Button = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['variant', 'outline', 'primary'].includes(prop) // <--- Adicione 'outline' e 'primary' aqui
+  shouldForwardProp: (prop) => !['variant', 'outline', 'primary'].includes(prop)
 })`
   padding: 10px 15px;
   border: none;
