@@ -3,11 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
+import { products as allProducts } from '../../data/products';
 import ImageCarousel from '../../components/product/ImageCarousel';
-import { useCart } from '../../context/CartContext';
-
-// Importa a imagem fixa temporariamente
-import mochilaRosa from '../../assets/f59585fa6f5daaefae9aeae538c23cd3-mochila-escolar-rosa-plana.webp';
+import { useCart } from '../../context/CartContext'; // Importa o contexto do carrinho
 
 // --- Styled Components (Mantenha como estão, exceto Price) ---
 const ProductDetailContainer = styled.div`
@@ -73,11 +71,13 @@ const ProductName = styled.h1`
   }
 `;
 
+// Condicionalmente esconda o Price se não for um kit
 const Price = styled.p`
   font-size: 2.2rem;
   color: var(--color-tertiary);
   font-weight: bold;
   margin-bottom: 20px;
+  ${props => props.$isHidden && 'display: none;'} /* Nova propriedade para esconder */
 
   @media (max-width: var(--breakpoint-tablet)) {
     font-size: 1.8rem;
@@ -112,7 +112,7 @@ const ButtonGroup = styled.div`
   @media (max-width: var(--breakpoint-mobile)) {
     flex-direction: column;
     width: 100%;
-
+    
     button {
       width: 100%;
     }
@@ -186,127 +186,83 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { addToCart } = useCart();
+  const [returnPath, setReturnPath] = useState('/pacotes');
+  const [returnButtonText, setReturnButtonText] = useState('Voltar para Pacotes');
+  const { addToCart } = useCart(); // Usa o hook do carrinho
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        // Usando o endpoint correto /v1/product/productlist/{id}
-        const apiUrl = `http://localhost:8080/v1/product/productlist/${id}`;
-        console.log("Chamando API para detalhes do pacote:", apiUrl); // Log da chamada
-        const response = await fetch(apiUrl);
+    const foundProduct = allProducts.find(p => p.id === id);
+    setProduct(foundProduct);
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            navigate('/404'); // Redireciona para 404 se não encontrado
-            return;
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
+    if (foundProduct) {
+      if (foundProduct.parentPackageId) {
+        const parentPackage = allProducts.find(p => p.id === foundProduct.parentPackageId && p.isKit);
+        if (parentPackage) {
+          setReturnPath(`/pacotes/${parentPackage.id}`);
+          setReturnButtonText(`Voltar para ${parentPackage.name}`);
+        } else {
+          setReturnPath('/pacotes');
+          setReturnButtonText('Voltar para Pacotes');
         }
-        const data = await response.json();
-        setProduct(data);
-      } catch (err) {
-        console.error("Erro ao buscar detalhes do pacote:", err);
-        setError("Não foi possível carregar os detalhes do pacote. Tente novamente mais tarde.");
-        setProduct(null);
-      } finally {
-        setLoading(false);
+      } else {
+        setReturnPath('/pacotes');
+        setReturnButtonText('Voltar para Pacotes');
       }
-    };
-
-    if (id) {
-      fetchProductDetails();
     } else {
-      // Se não houver ID na URL, redireciona para a página de 404
       navigate('/404');
     }
   }, [id, navigate]);
 
   const handleAddToCart = () => {
-    if (product) { // Garante que 'product' existe antes de tentar adicioná-lo
-      // A API não retorna 'stock' neste endpoint, então assumimos 0 para o carrinho por enquanto.
-      const productWithDefaultStock = { ...product, stock: 0 };
-      addToCart(productWithDefaultStock, 1);
+    if (product) {
+      addToCart(product, 1); // Adiciona 1 unidade do produto
+      alert(`${product.name} adicionado ao carrinho!`); // Feedback simples
     }
   };
 
-  // Renderização condicional para estados de carregamento, erro e produto não encontrado
-  if (loading) {
-    return (
-      <ProductDetailContainer>
-        <p>Carregando detalhes do pacote...</p>
-      </ProductDetailContainer>
-    );
-  }
-
-  if (error) {
-    return (
-      <ProductDetailContainer>
-        <p style={{ color: 'red' }}>{error}</p>
-        <Button onClick={() => navigate('/')}>Voltar para Seleção</Button> {/* REDIRECIONA PARA A TELA INICIAL */}
-      </ProductDetailContainer>
-    );
-  }
-
   if (!product) {
-      return (
-          <ProductDetailContainer>
-              <p>Produto não encontrado ou um erro inesperado ocorreu.</p>
-              <Button onClick={() => navigate('/')}>Voltar para Seleção</Button> {/* REDIRECIONA PARA A TELA INICIAL */}
-          </ProductDetailContainer>
-      );
+    return <ProductDetailContainer>Carregando...</ProductDetailContainer>;
   }
 
-  // A partir daqui, `product` tem garantia de existir.
-  // Estoque fixo em 0, pois a API ainda não fornece essa informação
-  const stock = 0;
-  const isLowStock = false; // Não há estoque real para ser baixo
-  const stockMessage = `Em estoque: ${stock} unidades`; // Será "Em estoque: 0 unidades"
-
-  // Formatação do preço
-  const formattedPrice = product.price != null
-    ? parseFloat(product.price).toFixed(2).replace('.', ',')
-    : 'N/A';
+  const isLowStock = product.stock > 0 && product.stock <= 10;
 
   return (
     <ProductDetailContainer>
       <ContentWrapper>
         <ImageSection>
-          <ImageCarousel images={[mochilaRosa]} />
+          <ImageCarousel images={product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages : [product.imageUrl]} />
         </ImageSection>
         <InfoSection>
           <ProductName>{product.name}</ProductName>
-          <Price>
-            R$ {formattedPrice}
+          {/* Apenas exibe o preço se for um kit ou se não tiver parentPackageId (ou seja, não é um item de kit) */}
+          <Price $isHidden={!product.isKit && product.parentPackageId}> {/* Esconde se não for kit E tiver parentPackageId */}
+            R$ {product.price.toFixed(2).replace('.', ',')}
           </Price>
           <Description>{product.description}</Description>
           <StockInfo $lowstock={isLowStock}>
-            {stockMessage} {stock === 0 && "(Esgotado)"}
+            Em estoque: {product.stock} unidades {product.stock === 0 && "(Esgotado)"}
           </StockInfo>
           <ButtonGroup>
-            <Button $primary onClick={handleAddToCart}>
-              Adicionar ao Carrinho
-            </Button>
-            {/* CORREÇÃO AQUI: BOTÃO "VOLTAR PARA PACOTES" AGORA REDIRECIONA PARA A TELA INICIAL */}
-            <Button $outline onClick={() => navigate('/')}>
-              Voltar para Seleção
+            {product.stock > 0 && ( // Adiciona o botão de adicionar ao carrinho apenas se houver estoque
+              <Button $primary onClick={handleAddToCart} disabled={product.stock === 0}>
+                Adicionar ao Carrinho
+              </Button>
+            )}
+            <Button $outline onClick={() => navigate(returnPath)}>
+              {returnButtonText}
             </Button>
           </ButtonGroup>
         </InfoSection>
       </ContentWrapper>
 
-      {/* Condicionalmente exibe a seção de itens se 'products' existir e tiver itens */}
-      {product.products && product.products.length > 0 && (
+      {product.items && product.items.length > 0 && (
         <ItemsIncludedSection>
           <SectionHeader>Itens Inclusos no Pacote:</SectionHeader>
           <ItemList>
-            {product.products.map((item, index) => (
+            {product.items.map((item, index) => (
               <Item key={index}>
-                {item.quantity}x {item.product.name}
+                {/* Removido a exibição do preço do item individual aqui */}
+                {item.quantity}x {item.link ? <Link to={item.link}>{item.name}</Link> : item.name}
               </Item>
             ))}
           </ItemList>

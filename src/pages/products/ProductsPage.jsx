@@ -1,11 +1,13 @@
 // src/pages/products/ProductsPage.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams, useNavigate } from 'react-router-dom';
-import { products as allProducts } from '../../data/products';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
-import { useCart } from '../../context/CartContext'; // Importa o contexto do carrinho
+import { useCart } from '../../context/CartContext';
+
+// Importa a imagem fixa temporariamente
+import mochilaRosa from '../../assets/f59585fa6f5daaefae9aeae538c23cd3-mochila-escolar-rosa-plana.webp';
 
 const ProductsPageContainer = styled.div`
   display: flex;
@@ -87,69 +89,125 @@ const ButtonGroup = styled.div`
 `;
 
 const ProductsPage = () => {
-  const { schoolId, gradeId } = useParams();
   const navigate = useNavigate();
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const { addToCart } = useCart(); // Usa o hook do carrinho
+  const location = useLocation();
+  const { schoolId, gradeId } = location.state || {};
+
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    // Simula a filtragem baseada na escola e série, ou mostra todos os kits/produtos se não especificado
-    let tempProducts = [];
-    if (schoolId && gradeId) {
-      // Lógica para filtrar produtos por escola e série (apenas kits, no seu caso atual)
-      tempProducts = allProducts.filter(p => p.isKit && p.availableFor.some(
-        sf => sf.schoolId === schoolId && sf.gradeId === gradeId
-      ));
-    } else {
-      // Se não houver schoolId/gradeId, mostra todos os kits e produtos individuais que não são parte de kits
-      tempProducts = allProducts.filter(p => p.isKit || (!p.isKit && !p.parentPackageId));
-    }
-    setFilteredProducts(tempProducts);
+    const fetchPackages = async () => {
+      if (!schoolId || !gradeId) {
+        setError("Escola ou série não selecionadas. Por favor, volte e selecione.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const apiUrl = `http://localhost:8080/v1/product/school/${schoolId}/grade/${gradeId}`;
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPackages(data);
+      } catch (err) {
+        console.error("Erro ao buscar pacotes:", err);
+        setError("Não foi possível carregar os pacotes para esta escola/série. Tente novamente mais tarde.");
+        setPackages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
   }, [schoolId, gradeId]);
 
   const handleAddToCart = (product, quantity = 1) => {
-    addToCart(product, quantity);
-    alert(`${product.name} adicionado ao carrinho!`); // Feedback simples
+    // Para adicionar ao carrinho, vamos passar o produto com um estoque padrão de 0,
+    // já que o backend ainda não fornece essa informação para este endpoint.
+    const productWithDefaultStock = { ...product, stock: 0 };
+    addToCart(productWithDefaultStock, quantity);
   };
+
+  if (loading) {
+    return (
+      <ProductsPageContainer>
+        <p>Carregando pacotes...</p>
+      </ProductsPageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProductsPageContainer>
+        <p style={{ color: 'red' }}>{error}</p>
+        <Button onClick={() => navigate('/')}>Voltar para Seleção</Button>
+      </ProductsPageContainer>
+    );
+  }
+
+  if (packages.length === 0) {
+    return (
+      <ProductsPageContainer>
+        {/* Mantém o header fixo mesmo sem pacotes */}
+        <HeaderContainer>
+          <PageTitle>Nossos Pacotes e Produtos</PageTitle>
+          <PageSubtitle>Descubra a variedade de kits escolares e produtos individuais que oferecemos.</PageSubtitle>
+        </HeaderContainer>
+        <p>Não encontramos pacotes para a seleção feita. Por favor, tente outra escola ou série.</p>
+        <Button $primary onClick={() => navigate('/')}>Voltar para Seleção de Escola/Série</Button>
+      </ProductsPageContainer>
+    );
+  }
 
   return (
     <ProductsPageContainer>
       <HeaderContainer>
-        <PageTitle>
-          {schoolId && gradeId ? `Pacotes para sua escola e série` : `Nossos Pacotes e Produtos`}
-        </PageTitle>
-        <PageSubtitle>
-          {schoolId && gradeId
-            ? `Confira os kits de materiais disponíveis para sua ${gradeId} na Escola ${schoolId}.`
-            : `Descubra a variedade de kits escolares e produtos individuais que oferecemos.`}
-        </PageSubtitle>
+        {/* HEADER FIXO - CONFORME SOLICITADO */}
+        <PageTitle>Nossos Pacotes e Produtos</PageTitle>
+        <PageSubtitle>Descubra a variedade de kits escolares e produtos individuais que oferecemos.</PageSubtitle>
       </HeaderContainer>
 
       <ProductGrid>
-        {filteredProducts.map(product => (
-          <Card key={product.id} $hoverable={true}> {/* Usando $hoverable */}
-            <ProductImage src={product.imageUrl} alt={product.name} />
-            <h3>{product.name}</h3>
-            {/* Exibe o preço se não for um item de um kit (para kits e produtos avulsos) */}
-            {!product.parentPackageId && (
-              <Price>R$ {product.price.toFixed(2).replace('.', ',')}</Price>
-            )}
-            <StockInfo $lowstock={product.stock > 0 && product.stock <= 10}> {/* Usando $lowstock */}
-              Em estoque: {product.stock} unidades
-              {product.stock === 0 && " (Esgotado)"}
-            </StockInfo>
-            <ButtonGroup>
-              {product.stock > 0 && ( // Adiciona o botão de adicionar ao carrinho apenas se houver estoque
-                <Button $primary onClick={() => handleAddToCart(product)} disabled={product.stock === 0}>
+        {packages.map(pkg => {
+          const formattedPrice = pkg.price != null
+            ? parseFloat(pkg.price).toFixed(2).replace('.', ',')
+            : 'N/A';
+
+          // A API ainda não retorna 'stock', então ele será sempre 0
+          // Removida a condição do botão para sempre exibi-lo
+          const stock = pkg.stock != null ? pkg.stock : 0;
+          const isLowStock = stock > 0 && stock <= 10; // Esta lógica de estilo permanece para quando o stock for adicionado
+          const stockMessage = `Em estoque: ${stock} unidades`; // A mensagem permanece "0 unidades"
+
+          return (
+            <Card key={pkg.id} $hoverable={true}>
+              <ProductImage src={mochilaRosa} alt={pkg.name} />
+              <h3>{pkg.name}</h3>
+              <Price>R$ {formattedPrice}</Price>
+              <StockInfo $lowstock={isLowStock}>
+                {stockMessage}
+              </StockInfo>
+              <ButtonGroup>
+                {/* BOTÃO "ADICIONAR AO CARRINHO" AGORA SEMPRE VISÍVEL */}
+                <Button $primary onClick={() => handleAddToCart(pkg)}>
                   Adicionar ao Carrinho
                 </Button>
-              )}
-              <Button $outline onClick={() => navigate(`/pacotes/${product.id}`)}>
-                Ver Detalhes
-              </Button>
-            </ButtonGroup>
-          </Card>
-        ))}
+                {/* Botão "Ver Detalhes" mantido */}
+                <Button $outline onClick={() => navigate(`/pacotes/${pkg.id}`)}>
+                  Ver Detalhes
+                </Button>
+              </ButtonGroup>
+            </Card>
+          );
+        })}
       </ProductGrid>
     </ProductsPageContainer>
   );

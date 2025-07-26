@@ -17,17 +17,17 @@ import ProfilePage from './pages/user/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import GlobalStyles from './styles/GlobalStyles';
 import SchoolGradeSelectionPage from './pages/SchoolGradeSelectionPage';
-import OrderHistoryPage from './pages/user/OrderHistoryPage'; // Página de histórico de pedidos (ainda não detalhada)
-import OrderDetailPage from './pages/user/OrderDetailPage'; // NOVO: Importa a página de detalhes do pedido
-import AdminLayout from './layouts/AdminLayout'; // Importe o novo layout
-import AdminDashboard from './pages/admin/AdminDashboard'; // Importe a dashboard do admin
-import AdminSuppliersPage from './pages/admin/AdminSuppliersPage'; // Importe a página de distribuidores
-import AdminShippingCompaniesPage from './pages/admin/AdminShippingCompaniesPage'; // Importe a página de empresas de entrega
-import AdminSchoolsPage from './pages/admin/AdminSchoolsPage'; // Importe a página de escolas
-import AdminContactsPage from './pages/admin/AdminContactsPage'; // Importe a página de contatos
+import OrderHistoryPage from './pages/user/OrderHistoryPage';
+import OrderDetailPage from './pages/user/OrderDetailPage';
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminSuppliersPage from './pages/admin/AdminSuppliersPage';
+import AdminShippingCompaniesPage from './pages/admin/AdminShippingCompaniesPage';
+import AdminSchoolsPage from './pages/admin/AdminSchoolsPage';
+import AdminContactsPage from './pages/admin/AdminContactsPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
-import AdminInventoryPage from './pages/admin/AdminInventoryPage'; // Importe a página de inventário
-import AdminOrdersPage from './components/admin/AdminOrdersPage'; // <--- CAMINHO CORRIGIDO
+import AdminInventoryPage from './pages/admin/AdminInventoryPage';
+import AdminOrdersPage from './components/admin/AdminOrdersPage';
 
 function App() {
   return (
@@ -53,14 +53,14 @@ function App() {
           {/* Novas Rotas para o Painel Administrativo */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
-	    <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="distribuidores" element={<AdminSuppliersPage />} />
             <Route path="empresas-entrega" element={<AdminShippingCompaniesPage />} />
             <Route path="escolas" element={<AdminSchoolsPage />} />
             <Route path="contatos" element={<AdminContactsPage />} />
             <Route path="produtos" element={<AdminProductsPage />} />
             <Route path="inventario" element={<AdminInventoryPage />} />
-            <Route path="pedidos" element={<AdminOrdersPage />} /> {/* <--- NOVO: Adicione a rota para Pedidos Admin */}
+            <Route path="pedidos" element={<AdminOrdersPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

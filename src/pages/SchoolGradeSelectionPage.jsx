@@ -1,26 +1,24 @@
 // src/pages/SchoolGradeSelectionPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Adicionado useEffect
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { getSchools, getGrades } from '../data/schoolsAndGrades';
+// import { getSchools, getGrades } from '../data/schoolsAndGrades'; // REMOVER este import
 import Button from '../components/common/Button';
-// Importe Input se você tiver um componente Input genérico, caso contrário, remova.
-// import Input from '../components/common/Input';
 
+// Estilos existentes (não alterados)
 const SelectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Garante que ocupe a altura restante, menos header e footer */
   min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 60px));
   padding: 20px;
   background-color: var(--color-background-light, #f4f7f6);
   text-align: center;
-  box-sizing: border-box; /* Garante que padding não adicione à largura total */
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 15px; /* Menor padding em telas menores */
+    padding: 15px;
     min-height: calc(100vh - var(--header-height-mobile, 60px) - var(--footer-height-mobile, 50px));
   }
 `;
@@ -30,19 +28,19 @@ const SelectionBox = styled.div`
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  max-width: 500px; /* Limita a largura máxima em telas maiores */
-  width: 90%; /* Ocupa 90% da largura disponível em telas menores */
-  box-sizing: border-box; /* Inclui padding e border na largura total */
-  margin: auto; /* Centraliza a caixa horizontalmente */
+  max-width: 500px;
+  width: 90%;
+  box-sizing: border-box;
+  margin: auto;
 
   @media (max-width: 768px) {
-    padding: 30px 20px; /* Ajusta o padding para telas menores */
-    width: 95%; /* Ocupa mais largura em telas muito pequenas */
+    padding: 30px 20px;
+    width: 95%;
   }
 
   @media (orientation: landscape) and (max-height: 500px) {
-    padding: 20px; /* Ajusta o padding para landscape em telas pequenas */
-    max-width: 400px; /* Reduz max-width para não ficar muito largo */
+    padding: 20px;
+    max-width: 400px;
   }
 `;
 
@@ -86,9 +84,9 @@ const Select = styled.select`
   font-size: 1rem;
   color: var(--color-text, #333);
   background-color: white;
-  appearance: none; /* Remove seta padrão em alguns navegadores */
-  -webkit-appearance: none; /* Para Safari */
-  -moz-appearance: none; /* Para Firefox */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23444%22%20d%3D%22M7%209.414l3.707-3.707a1%201%200%2000-1.414-1.414L6%207.586%202.707%204.293a1%201%200%2000-1.414%201.414z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -102,27 +100,91 @@ const Select = styled.select`
   }
 
   @media (max-width: 768px) {
-    padding: 10px; /* Menor padding para selects em telas menores */
+    padding: 10px;
     font-size: 0.9rem;
   }
 `;
 
 const SchoolGradeSelectionPage = () => {
-  const [selectedSchool, setSelectedSchool] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState('');
+  const [selectedSchoolUUID, setSelectedSchoolUUID] = useState(''); // Armazenará o UUID da escola selecionada
+  const [selectedGradeUUID, setSelectedGradeUUID] = useState('');   // Armazenará o UUID da série selecionada
+  const [schoolsData, setSchoolsData] = useState([]);               // Armazenará os dados da API
+  const [availableGrades, setAvailableGrades] = useState([]);       // Armazenará as séries da escola selecionada
+  const [loading, setLoading] = useState(true);                     // Estado de carregamento
+  const [error, setError] = useState(null);                         // Estado de erro
   const navigate = useNavigate();
 
-  const schools = getSchools();
-  const grades = getGrades();
+  // Função para buscar dados da API
+  useEffect(() => {
+    const fetchSchoolsAndGrades = async () => {
+      try {
+        setLoading(true);
+        // Substitua 'http://localhost:8080/api/schools-with-grades' pela sua URL da API
+        // Certifique-se de que a API retorne o formato JSON que você mostrou
+        const response = await fetch('http://localhost:8080/v1/school'); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setSchoolsData(data);
+        setError(null); // Limpa qualquer erro anterior
+      } catch (err) {
+        console.error("Erro ao buscar escolas e séries:", err);
+        setError("Não foi possível carregar as escolas e séries. Tente novamente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchoolsAndGrades();
+  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez ao montar o componente
+
+  // Atualiza as séries disponíveis quando a escola selecionada muda
+  useEffect(() => {
+    if (selectedSchoolUUID) {
+      const school = schoolsData.find(s => s.schoolId === selectedSchoolUUID);
+      if (school) {
+        setAvailableGrades(school.grades);
+      } else {
+        setAvailableGrades([]); // Limpa as séries se a escola não for encontrada (erro ou reset)
+      }
+      setSelectedGradeUUID(''); // Reseta a série selecionada ao mudar a escola
+    } else {
+      setAvailableGrades([]); // Nenhuma escola selecionada, nenhuma série disponível
+      setSelectedGradeUUID('');
+    }
+  }, [selectedSchoolUUID, schoolsData]); // Depende de selectedSchoolUUID e schoolsData
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedSchool && selectedGrade) {
-      navigate('/pacotes', { state: { schoolId: selectedSchool, gradeId: selectedGrade } });
+    if (selectedSchoolUUID && selectedGradeUUID) {
+      // Passa os UUIDs para a página de pacotes
+      navigate('/pacotes', { state: { schoolId: selectedSchoolUUID, gradeId: selectedGradeUUID } });
     } else {
       alert('Por favor, selecione a escola e a série.');
     }
   };
+
+  if (loading) {
+    return (
+      <SelectionContainer>
+        <SelectionBox>
+          <p>Carregando escolas e séries...</p>
+        </SelectionBox>
+      </SelectionContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <SelectionContainer>
+        <SelectionBox>
+          <p style={{ color: 'red' }}>{error}</p>
+          <Button onClick={() => window.location.reload()}>Recarregar Página</Button>
+        </SelectionBox>
+      </SelectionContainer>
+    );
+  }
 
   return (
     <SelectionContainer>
@@ -131,26 +193,27 @@ const SchoolGradeSelectionPage = () => {
         <Subtitle>Para encontrar os materiais certos, por favor, selecione a escola e a série do aluno.</Subtitle>
         <Form onSubmit={handleSubmit}>
           <Select
-            value={selectedSchool}
-            onChange={(e) => setSelectedSchool(e.target.value)}
+            value={selectedSchoolUUID}
+            onChange={(e) => setSelectedSchoolUUID(e.target.value)}
             required
           >
             <option value="">Selecione a Escola</option>
-            {schools.map((school) => (
-              <option key={school.id} value={school.id}>
+            {schoolsData.map((school) => (
+              <option key={school.schoolId} value={school.schoolId}>
                 {school.name}
               </option>
             ))}
           </Select>
 
           <Select
-            value={selectedGrade}
-            onChange={(e) => setSelectedGrade(e.target.value)}
+            value={selectedGradeUUID}
+            onChange={(e) => setSelectedGradeUUID(e.target.value)}
             required
+            disabled={!selectedSchoolUUID} // Desabilita o dropdown de série se nenhuma escola for selecionada
           >
             <option value="">Selecione a Série</option>
-            {grades.map((grade) => (
-              <option key={grade.id} value={grade.id}>
+            {availableGrades.map((grade) => (
+              <option key={grade.gradeId} value={grade.gradeId}>
                 {grade.name}
               </option>
             ))}
