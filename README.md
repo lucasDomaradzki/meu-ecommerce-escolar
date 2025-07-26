@@ -34,4 +34,4 @@ npm install
 npm run dev
 
 # Acesse via browser pelo endereço: http://localhost:5173/
-<img width="1051" height="1036" alt="Screenshot from 2025-07-26 00-34-15" src="https://github.com/user-attachments/assets/64c52bf0-2235-4a75-9962-7c2ced299603" />
+![Screenshot_2](https://github.com/user-attachments/assets/64c52bf0-2235-4a75-9962-7c2ced299603)
