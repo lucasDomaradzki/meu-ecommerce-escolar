@@ -32,3 +32,6 @@ npm install
 
 # Inicie o servidor de desenvolvimento
 npm run dev
+
+# Acesse via browser pelo endereço: http://localhost:5173/
+![alt text](https://github.com/user-attachments/assets/072cba47-4f03-49ad-a1a3-e4a06d584c43)
